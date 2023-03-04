@@ -6,798 +6,599 @@ function CalculateVh()
   document.documentElement.style.setProperty('--vh', vh + 'px');
 }
 
+function TogglePanel(panel)
+{
+  if(panel.style.display === '') panel.style.display = 'none';
+  else panel.style.display = '';
+}
+
 window.addEventListener('DOMContentLoaded', CalculateVh);
 window.addEventListener('resize', CalculateVh);
 window.addEventListener('orientationchange', CalculateVh);
 
-// GAME classes
+// header controls
+const ScoreDisplay = document.getElementById("ScoreDisplay");
+const PlayButton = document.getElementById("PlayButton");
+const PauseButton = document.getElementById("PauseButton");
 
-class Vector
+const timerDisplay = document.getElementById("timerDisplay");
+
+// game messages
+const responseDisplay = document.getElementById("responseDisplay");
+
+// answer display
+const answerContainer = document.getElementById("answerContainer");
+
+// wordwheel display
+const canvasContainer = document.getElementById("canvasContainer");
+const canvas = document.getElementById("canvas");
+const c = canvas.getContext("2d");
+
+// bottom menu
+const deleteButton = document.getElementById("deleteButton");
+const submitButton = document.getElementById("submitButton");
+const submitAnswerID = document.getElementById("submitAnswerID");
+
+// assignments
+PlayButton.onclick = function(){ Play() };
+PauseButton.onclick = function(){ Pause() };
+
+submitButton.onclick = function(){ ValidateAnswer() };
+deleteButton.onclick = function(){ DeleteLetter() };
+
+// wordwheel button locations and info
+let buttonPoints = [];
+// which buttons have been clicked
+let tempButtons = [];
+// holds temp colour
+let col = undefined;
+
+// monitors whether there is an active game
+let playing = false;
+
+// timer variables
+let timer = 0;
+let interval = undefined;
+let gameTime = 300;
+
+// game information arrays
+// all possible words
+let words = [];
+
+// to pick the 9 letters
+let consonants = [];
+let vowels = [];
+
+// the 9 letters
+let choices = [];
+
+// players answers
+let answers = [];
+// pool of possible answers
+let possibleAnswers = [];
+
+TogglePanel(PauseButton);
+
+// get the word list and parse it into the words array
+function Start()
 {
-  constructor(x, y)
+  $.get('./src/assets/words.txt', function (data)
   {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-class Cell
-{
-  constructor()
-  {
-    this.index = 0;
-
-    this.up = true;
-    this.down = true;
-    this.left = true;
-    this.right = true;
-
-    this.leftIndex = -1;
-    this.rightIndex = -1;
-    this.upIndex = -1;
-    this.downIndex = -1;
-
-    this.visited = false;
-    this.target = false;
-    
-    this.row = 0;
-    this.column = 0;
-
-    this.rowPos = 0;
-    this.columnPos = 0;
-  }
-}
-
-class Player
-{
-  constructor()
-  {
-    this.x = 0;
-    this.y = 0;
-    this.index = 0;
-  }
-
-  Move(DIRECTION)
-  {
-    if(this.CheckValidPos(DIRECTION))
+    words = data.split("\n");
+    for(let i = 0; i < words.length; i++)
     {
-      ClearPlayer();
-      if(DIRECTION === "UP")
-      {
-        this.y -= h;
-        this.index = parseInt(this.index) - 1;
-      }
-      else if (DIRECTION === "DOWN")
-      {
-        this.y += h;
-        this.index = parseInt(this.index) + 1;
-      }
-      else if (DIRECTION === "LEFT")
-      {
-        this.x -= w;
-        this.index = parseInt(this.index) - parseInt(width);
-      }
-      else if (DIRECTION === "RIGHT")
-      {
-        this.x += w;
-        this.index = parseInt(this.index) + parseInt(width);
-      }
-      ClearMaze();
-      DrawMaze();
-      DrawRoute();
-      DrawPlayer();
-      this.CheckWin();
+      words[i] = words[i].replace("\n", "");
+      words[i] = words[i].replace(" ", "");
+      words[i] = words[i].replace(/\s/g, '');
     }
-  }
+  });
+}
 
-  CheckValidPos(DIRECTION)
+// switches between play game, stop game, start new game
+function Play()
+{
+  if(!playing) // if playing, end
   {
-     // players row
-    let r = Math.floor(this.x / w);
-    // players column
-    let c = Math.floor(this.y / h);
-    // index of the cell player is in
-    let i = r * height + c;
-    this.index = i;
-
-    if(DIRECTION === "UP" && maze[i].up === true) return false;
-    if(DIRECTION === "DOWN" && maze[i].down === true) return false;
-    if(DIRECTION === "LEFT" && maze[i].left === true) return false;
-    if(DIRECTION === "RIGHT" && maze[i].right === true) return false;
-    return true;
+    TogglePanel(PlayButton);
+    TogglePanel(PauseButton);
+    NewGame();
   }
+}
 
-  CheckWin()
+function Pause()
+{
+  if(playing) // if playing, end
   {
-    if(Math.floor(this.x) === Math.floor(maze[maze.length-1].rowPos + w/2) && 
-       Math.floor(this.y) === Math.floor(maze[maze.length-1].columnPos - h/2))
-	  {
-      if(autoNew)
-      {
-        if(increment && width < 50)
-        {
-          width++;
-          height++;
-          display001.value = width;
-        }
-        NewMaze();
-      }
-    }
+    TogglePanel(PlayButton);
+    TogglePanel(PauseButton);
+    EndGame();
   }
 }
 
-// GENERATE CUSTOM MAZE
-
-const generateMaze = document.getElementById("generateMaze");
-generateMaze.onclick = function () { GenerateCustomMaze(); };
-
-// RESET TO DEFAULT
-
-const ResetButton = document.getElementById("ResetButton");
-ResetButton.onclick = function () { NewMaze(); };
-
-// HIDE CONTROLS
-
-const ControllerButton = document.getElementById("ControllerButton");
-ControllerButton.onclick = function () { HidePad(); };
-let hideT = false;
-const footerControls = document.getElementById("footerControls");
-
-// THEME related references
-
-const iUp = document.getElementById("iUp");
-const iLeft = document.getElementById("iLeft");
-const iRight = document.getElementById("iRight");
-const iDown = document.getElementById("iDown");
-
-let mazeColour = "rgba(50, 50, 60, 1)";
-let playerColour = "rgba(150, 250, 150, 1)";
-let exitColour = "rgba(250, 150, 150, 1)";
-let routeColour = "rgba(46, 97, 113, 0.35)";
-
-// TOGGLE CUSTOM MAZE MENU
-
-let toggleS = false;
-const settingsMenu = document.getElementById("settingsMenu");
-settingsMenu.style.display = 'none';
-const OptionsButton = document.getElementById("OptionsButton");
-OptionsButton.onclick = function () { ToggleSettings(); };
-const SearchButton = document.getElementById("SearchButton");
-SearchButton.onclick = function () { Find(); };
-
-// CUSTOM MENU INPUT
-
-const aNew = document.getElementById("autonew");
-aNew.onclick = function () { AutoNew(); };
-
-const aIncrement = document.getElementById("autoincrement");
-aIncrement.onclick = function () { AutoIncrement(); };
-
-// TOUCHPAD CONTROLS
-
-const upButton = document.getElementById("upButton");
-upButton.onclick = function () { TouchPad('UP'); };
-const downButton = document.getElementById("downButton");
-downButton.onclick = function () { TouchPad('DOWN'); };
-const leftButton = document.getElementById("leftButton");
-leftButton.onclick = function () { TouchPad('LEFT'); };
-const rightButton = document.getElementById("rightButton");
-rightButton.onclick = function () { TouchPad('RIGHT'); };
-
-// GENERAL CANVAS VARIABLES
-
-const gameDiv = document.getElementById("gameDiv");
-const canvas = document.getElementById("ctx");
-const ctx = document.getElementById("ctx").getContext("2d");
-
-// GAME VARIABLES
-
-let width, height, size, w, h, index, nowCell, running, rnd, position, autoNew, t1, t2, t3, increment, cWidth, cHeight, factor;
-let maze = [];
-let history1 = [];
-let mousePos = new Vector();
-let player = new Player();
-
-function ToggleSettings()
+// reset all UI, get a new word list and start the timer
+function NewGame()
 {
-  toggleS = !toggleS;
-  if(toggleS) settingsMenu.style.display = '';
-  else settingsMenu.style.display = 'none';
-}
-
-// MAZE CODE
-
-function DefaultSettings()
-{
-	display001.value = 5;
-
-  width = 5;
-  height = 5;
-
-  if(hideT) factor = 0.925;
-  else factor = 0.625;
-  
-  let screenWidth = window.innerWidth;
-  let screenHeight = window.innerHeight * factor;
-
-  let squareSize;
-  
-  if(screenWidth >= screenHeight) squareSize = screenHeight;
-  else squareSize = screenWidth;
-  
-  squareSize = squareSize * 0.9;
-
-  cWidth = squareSize;
-  cHeight = squareSize;
-  
-  autoNew = true;
-  increment = true;
-  aNew.checked = true;
-  aIncrement.checked = true;
-  
-  NewMaze();
-}
-
-function AutoNew()
-{
-  autoNew = !autoNew;
-}
-
-function AutoIncrement()
-{
-  increment = !increment;
-}
-
-function GenerateCustomMaze()
-{
-  width = Number(display001.value);
-  height = Number(display001.value);
-
-  autoNew = aNew.checked;
-  increment = aIncrement.checked;
-
-  ToggleSettings();
-
-  NewMaze();
-}
-
-function NewMaze()
-{
-  maze.length = 0;
-  history1.length = 0;
-  activePath = new Path();
-
-  width = Number(display001.value);
-	height = Number(display001.value);
-	
-	autoNew = aNew.checked;
-	increment = aIncrement.checked;
-
-  canvas.width = cWidth;
-  canvas.height = cHeight;
-
-  size = width * height;
-  
-  w = canvas.width / width;
-  h = canvas.height / height;
-  
-  index = 0;
-  
-  nowCell = maze[0];
-  
-  running = true;
-  
-  rnd = 0;
-  
-  t1 = Math.random();
-  t2 = Math.random();
-  t3 = Math.random();
-
-  for(let x = 0; x < width; x++)
-  {
-    for(let y = 0; y < height; y++)
-	  {
-      let newCell = new Cell();
-      newCell.row = x;
-      newCell.column = y;
-      newCell.rowPos = x * w;
-      newCell.columnPos = y * h + h;
-      newCell.index = index;
-      if((index + height) <= (width * height)) newCell.rightIndex = index + height;
-      else newCell.rightIndex = -1;
-      if((index - height) >= 0) newCell.leftIndex = index - height;
-      else newCell.leftIndex = -1;
-      if(y < height - 1) newCell.downIndex = index + 1;
-      else newCell.downIndex = -1;
-      if(y > 0) newCell.upIndex = index - 1;
-      else newCell.upIndex = -1;
-      if(index === ( ( width * height ) - 1 )) newCell.target = true;
-      maze.push(newCell);
-      index++;
-    }
-  }
-  MakeMaze();
-}
-
-function MakeMaze()
-{
-  rnd = Math.floor(Math.random() * maze.length);
-  
-  history1.push(rnd);
-  
-  position = history1.length - 1;
-
+  answerContainer.innerHTML = '';
   let counter = 0;
-
-  while(running)
+  tempButtons.length = 0;
+  possibleAnswers.length = 0;
+  while(possibleAnswers.length < 10)
   {
+    GetWords();
     counter++;
+    if(counter > 100)
+    {
+      ToggleGame();
+      break;
+    }
+  }
+  ScoreDisplay.innerHTML = '<span style="color:var(--wordGot);">' + answers.length + '</span>' +'/' + '<span style="color:var(--wordMissed);">' +possibleAnswers.length + '</span>';
+  responseDisplay.innerHTML = 'Game Started.';
+  AnimatePop(responseDisplay);
+  Draw();
+  clearInterval(interval);
+  interval = undefined;
+  timer = gameTime;
+  StartTimer();
+  ShowTimer();
+  col = RandomCol(200);
+  playing = true;
+}
 
-    if(counter > 100000000) break;
+function GetWords()
+{
+  answers.length = 0;
+  possibleAnswers.length = 0;
+  consonants.length = 0;
+  consonants = [ "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z", ];
+  vowels.length = 0;
+  vowels = [ "a", "e", "i", "o", "u" ];
+  choices.length = 0;
+  let count = 9;
+  let pick = Math.floor(Math.random() * 4) + 1;
+  count -= pick;
+  for(let i = 0; i < pick; i++)
+  {
+    let picked = Math.floor(Math.random() * vowels.length);
+    if(vowels[picked] != null)
+    {
+      choices.push(vowels[picked]);
+      let perCent = Math.floor(Math.random() * 100);
+      if(perCent < 5 && i < pick)
+      {
+        choices.push(vowels[picked]);
+        i++;
+      }
+      vowels.splice(picked, 1);
+    }
+  }
+  for(let i = 0; i < count; i++)
+  {
+    let picked = Math.floor(Math.random() * consonants.length);
+    choices.push(consonants[picked]);
+    let perCent = Math.floor(Math.random() * 100);
+    if(perCent < 5 && i < count)
+    {
+      choices.push(consonants[picked]);
+      i++;
+    }
+    consonants.splice(picked, 1);
+  }
+  choices = ShuffleArray(choices);
+  if(choices.length > 9) choices.length = 9;
+  let middle = choices[0].toString();
+  for(let i = 0; i < words.length; i++)
+  {
+    if(!words[i].includes(middle) || words[i].length > 9 || words[i].length < 3) continue;
+    let newList = [];
+    let thisWord = words[i];
+    let check = true;
+    for(let c = 0; c < choices.length; c++)
+    {
+      let newC = choices[c];
+      newList.push(newC);
+    }
+    for(let w = 0; w < thisWord.length; w++)
+    {
+      if(!newList.includes(thisWord[w])) check = false;
+      if(newList.includes(thisWord[w]))
+      {
+        let iOf = newList.indexOf(thisWord[w]);
+        newList.splice(iOf, 1);
+      }
+      if (newList.length <= 0) check = false;
+    }
+    if (!check) continue;
+    else possibleAnswers.push(thisWord);
+  }
+}
 
-    let choose = [];
+function ShuffleArray(array)
+{
+  for(let i = array.length - 1; i > 0; i--)
+  {
+    let j = Math.floor(Math.random() * (i + 1));
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
 
-    maze[rnd].visited = true;
+function StartTimer()
+{
+  interval = setInterval(DegradeTimer, 1000);
+}
 
-    let upI = rnd -1;
-    let downI = rnd + 1;
-    let leftI = rnd - height;
-    let rightI = rnd + height;
+function DegradeTimer()
+{
+  if(timer > 1)
+  {
+    timer--;
+    ShowTimer();
+  }
+  else
+  {
+    EndGame();
+  }
+}
 
-    if(upI >= 0 && upI < maze.length && maze[rnd].column != 0)
-      if(maze[upI].visited === false)
-	    {
-        choose.push(upI);
-      }
-    if(downI >= 0 && downI < maze.length && maze[rnd].column != height - 1)
-      if(maze[downI].visited === false)
-	    {
-        choose.push(downI);
-      }
-    if(leftI >= 0 && leftI < maze.length && maze[rnd].row != 0)
-      if(maze[leftI].visited === false)
-	    {
-        choose.push(leftI);
-      }
-    if(rightI >= 0 && rightI < maze.length && maze[rnd].row != width - 1)
-      if(maze[rightI].visited === false)
-	    {
-        choose.push(rightI);
-      }
+function ShowTimer()
+{
+  let minutes = Math.floor(timer / 60);
+  let seconds = timer % 60;
+  if(minutes > 0 && seconds < 10) seconds = "0" + seconds;
+  if(minutes > 0) timerDisplay.innerHTML = minutes + ":" + seconds;
+  else timerDisplay.innerHTML = seconds;
+}
 
-    if(choose.length > 0)
-	  {
-      let pick = Math.floor(Math.random() * choose.length);
-      if(choose[pick] === upI)
-	    {
-        maze[rnd].up = false;
-        maze[upI].down = false;
+function CheckButton(x, y)
+{
+  for(let i = 0; i < buttonPoints.length; i++)
+  {
+    let b = buttonPoints[i];
+    if(CircleIntersect(x, y, 1, b.x, b.y, b.r))
+    {
+      return i;
+    }
+  }
+  return false;
+}
+
+function CircleIntersect(x1, y1, r1, x2, y2, r2)
+{
+  let squareDistance = ( x1 - x2 ) * ( x1 - x2 ) + ( y1 - y2 ) * ( y1 - y2 );
+  return squareDistance <= ( ( r1 + r2 ) * ( r1 + r2 ) );
+}
+
+function GetCirclePoint(xStart, yStart, radius, angle)
+{
+  let x = xStart + radius * Math.cos(angle)
+  let y = yStart + radius * Math.sin(angle)
+  return {x:x, y:y, r:30};
+}
+
+function DegreeToRad(degrees)
+{
+  return degrees * ( Math.PI / 180 );
+}
+
+function AddLetter(index)
+{
+  if(submitAnswerID.value.length >= 9) return;
+  if(tempButtons.includes(index)) return;
+  tempButtons.push(index);
+  submitAnswerID.value += buttonPoints[index].c;
+  Draw();
+}
+
+function DeleteLetter()
+{
+  if(tempButtons.length > 0)
+  {
+    tempButtons.length = tempButtons.length - 1;
+  }
+  let current = submitAnswerID.value;
+  current = current.substring(0, current.length - 1);
+  submitAnswerID.value = current;
+  Draw();
+}
+
+function CheckManualEntry()
+{
+  let txt = submitAnswerID.value;
+  let tempChoices = [];
+
+  for(let i = 0; i < choices.length; i++)
+  {
+    tempChoices.push(choices[i]);
+  }
+  let newStr = "";
+  for(let i = 0; i < txt.length; i++)
+  {
+    if(tempChoices.includes(txt[i]))
+    {
+      newStr += txt[i];
+      let iOf = tempChoices.indexOf(txt[i]);
+      tempChoices.splice(iOf, 1);
+    }
+  }
+
+  submitAnswerID.value = newStr;
+
+  tempButtons.length = 0;
+  let validate = false;
+
+  for(let i = 0; i < newStr.length; i++)
+  {
+    let search = newStr[i].toLowerCase();
+    if(search === choices[0])
+    {
+      validate = true;
+      tempButtons.push(0);
+      continue;
+    }
+    if(choices.includes(search))
+    {
+      let iOf = choices.indexOf(search);
+      if(tempButtons.includes(iOf))
+      {
+        let counter = 0;
+        let find = iOf;
+        while(find === iOf)
+        {
+          iOf = choices.indexOf(search, find + 1);
+          counter++;
+          if(counter > 100) break;
+        }
       }
-      if(choose[pick] === downI)
-	    {
-        maze[rnd].down = false;
-        maze[downI].up = false;
-      }
-      if(choose[pick] === leftI)
-	    {
-        maze[rnd].left = false;
-        maze[leftI].right = false;
-      }
-      if(choose[pick] === rightI)
-	    {
-        maze[rnd].right = false;
-        maze[rightI].left = false;
-      }
-      history1.push(choose[pick]);
-      maze[choose[pick]].visited = true;
-      GetNext();
+      validate = true;
+      tempButtons.push(iOf);
+    }
+  }
+  Draw();
+  return validate;
+}
+
+function Draw()
+{
+  buttonPoints.length = 0;
+  c.clearRect(0,0,canvas.width,canvas.height);
+  let w = canvasContainer.scrollHeight * 0.9;
+  canvas.width = w;
+  canvas.height = w;
+  c.width = w;
+  c.height = w;
+  c.fillStyle = "black";
+  c.strokeStyle = "black";
+  c.lineWidth = 0.5;
+  c.font = "16px Arial";
+  c.textAlign = "center";
+  c.textBaseline = 'middle';
+  let buttonCircle = canvas.width/10;
+  // main circle
+  c.beginPath();
+  c.arc((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), 0, (2 * Math.PI));
+  c.stroke();
+  /// inner circle
+  c.beginPath();
+  c.arc((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), 0, (2 * Math.PI));
+  c.stroke();
+  // middle letter
+  c.fillText(choices[0].toUpperCase(), (c.width/2), (c.height/2));
+  let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
+  buttonPoints.push(startPoint);
+  // line angles
+  let angles = [0, 45, 90, 135, 180, 225, 270, 315];
+  // draw lines
+  for(let i = 0; i < angles.length; i++)
+  {
+    let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), DegreeToRad(angles[i]));
+    let endPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), DegreeToRad(angles[i]));
+    c.beginPath();
+    c.moveTo(startPoint.x, startPoint.y);
+    c.lineTo(endPoint.x, endPoint.y);
+    c.stroke();
+  }
+  // outer button positions
+  angles = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
+  if(tempButtons.includes(0))
+  {
+    c.fillStyle = "rgba(" + col.r + " , " + col.g + " , " + col.b + ", 1)";
+    let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
+    c.beginPath();
+    c.arc(startPoint.x, startPoint.y, startPoint.r, 0, (2 * Math.PI));
+    c.fill();
+    c.fillStyle = "black";
+    c.fillText(choices[0].toUpperCase(), startPoint.x, startPoint.y);
+  }
+  let counter = 1;
+  c.strokeStyle = "grey";
+  // draw outer buttons
+  for(let i = 0; i < angles.length; i++)
+  {
+    let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/3)-c.lineWidth), DegreeToRad(angles[i]));
+    startPoint.c = choices[counter];
+    startPoint.i = counter;
+    if(tempButtons.includes(counter))
+    {
+      c.fillStyle = "rgba(" + col.r + " , " + col.g + " , " + col.b + ", 1)";
+      c.beginPath();
+      c.arc(startPoint.x, startPoint.y, buttonCircle, 0, (2 * Math.PI));
+      c.fill();
+    }
+    c.beginPath();
+    c.arc(startPoint.x, startPoint.y, buttonCircle, 0, (2 * Math.PI));
+    c.stroke();
+    c.fillStyle = "black";
+    c.fillText(choices[counter].toUpperCase(), startPoint.x, startPoint.y);
+    counter++;
+    buttonPoints.push(startPoint);
+  }
+}
+
+function RandomCol(floor)
+{
+  let r = (Math.floor(Math.random() * (255 - floor))) + floor;
+  let g = (Math.floor(Math.random() * (255 - floor))) + floor;
+  let b = (Math.floor(Math.random() * (255 - floor))) + floor;
+  return {r, g, b};
+}
+
+function AnimatePop(panel)
+{
+  panel.animate([
+    { transform: 'scale(110%, 110%)'},
+    { transform: 'scale(109%, 109%)'},
+    { transform: 'scale(108%, 108%)'},
+    { transform: 'scale(107%, 107%)'},
+    { transform: 'scale(106%, 106%)'},
+    { transform: 'scale(105%, 105%)'},
+    { transform: 'scale(104%, 104%)'},
+    { transform: 'scale(103%, 103%)'},
+    { transform: 'scale(102%, 102%)'},
+    { transform: 'scale(101%, 101%)'},
+    { transform: 'scale(100%, 100%)'}],
+    {
+      duration: 100,
+    }
+  );
+}
+
+function ValidateAnswer()
+{
+  if(!playing) return;
+  let submission = submitAnswerID.value;
+  if(submission.length == 0) return;
+  for(let i = 0; i < submission.length; i++)
+  {
+    if(!choices.includes(submission[i]))
+    {
+      responseDisplay.innerHTML = 'Invalid Answer.';
+      AnimatePop(responseDisplay);
+      submitAnswerID.value = '';
+      return;
+    }
+  }
+  if(possibleAnswers.includes(submission) && !answers.includes(submission))
+  {
+    responseDisplay.innerHTML = 'Correct.';
+    AnimatePop(responseDisplay);
+    answers.unshift(submission);
+    submitAnswerID.value = '';
+    ShowAnswersSoFar();
+  }
+  else if(possibleAnswers.includes(submission) && answers.includes(submission))
+  {
+    responseDisplay.innerHTML = 'Already Got.';
+    AnimatePop(responseDisplay);
+    submitAnswerID.value = '';
+  }
+  else
+  {
+    responseDisplay.innerHTML = 'Invalid Answer.';
+    AnimatePop(responseDisplay);
+    submitAnswerID.value = '';
+  }
+  tempButtons.length = 0;
+  Draw();
+}
+
+function ShowAnswersSoFar()
+{
+  if(answers.length > 0 && answerContainer != null && ScoreDisplay != null)
+  {
+    answerContainer.innerHTML = '';
+    for(let i = 0; i < answers.length; i++)
+    {
+      let b2 = document.createElement("button");
+      b2.className = "answerButtons p-2 m-2 rounded-lg";
+      b2.style.fontSize = '20px';
+      b2.style.backgroundColor = 'rgb(150,150,255)';
+      b2.innerHTML = answers[i];
+      b2.onclick = GetDefinition;
+      answerContainer.appendChild(b2);
+    }
+    ScoreDisplay.innerHTML = '<span style="color:var(--wordGot);">' + answers.length + '</span>' +'/' + '<span style="color:var(--wordMissed);">' +possibleAnswers.length + '</span>';
+  }
+}
+
+function GetDefinition(event)
+{
+  window.open("http://www.google.com/search?q=" + 'dictionary definition of ' + event.target.innerHTML); 
+}
+
+function EndGame()
+{
+  answerContainer.innerHTML = '';
+  submitAnswerID.value = '';
+  responseDisplay.innerHTML = 'Game Ended.';
+  AnimatePop(responseDisplay);
+  for(var i = 0; i < possibleAnswers.length; i++)
+  {
+    var b2 = document.createElement("button");
+    b2.className = "answerButtons";
+    b2.style.fontSize = '20px';
+    if(answers.includes(possibleAnswers[i]))
+    {
+      b2.style.backgroundColor = 'rgb(150,150,255)';
     }
     else
     {
-      history1.splice(position, 1);
-      GetNext();
+      b2.style.backgroundColor = 'rgb(255,150,150)';
     }
+    b2.innerHTML = possibleAnswers[i];
+    b2.onclick = GetDefinition;
+    answerContainer.appendChild(b2);
   }
-
-  player.x = maze[0].rowPos + w / 2;
-  player.y = maze[0].columnPos - h / 2;
-  player.index = 0;
-
-  ClearMaze();
-  DrawMaze();
-  DrawRoute();
-  DrawPlayer();
+  timer = 0;
+  clearInterval(interval);
+  interval = undefined;
+  timerDisplay.innerHTML = "0:00";
+  tempButtons.length = 0;
+  Draw();
+  playing = false;
 }
 
-function GetNext()
+canvas.onmousedown = function(event)
 {
-  if(history1.length > 0)
+  if(event.button === 0 && playing)
   {
-    let type = Math.random();
-    if(type >= t1)
-	  {
-      rnd = history1[history1.length - 1];
-      position = history1.length - 1;
-    }
-    else if(type < t1 && type >= t3)
-	  {
-      rnd = history1[0];
-      position = 0;
-    }
-    else if(type < t3)
+    event.preventDefault();
+    let rect = canvas.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+    let index = CheckButton(x, y);
+    if(index !== false)
     {
-      let pickR = Math.floor(Math.random() * history1.length);
-      rnd = history1[pickR];
-      position = pickR;
-    }
-  } 
-  else
-  {
-    running = false;
-  }
-}
-
-// DRAW FUNCTIONS
-
-function ClearMaze()
-{
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function DrawMaze()
-{
-  ctx.strokeStyle = mazeColour;
-  ctx.lineWidth = 1;
-  const half = ctx.lineWidth / 2;
-  const extra = ctx.lineWidth;
-  ctx.beginPath();
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.stroke();
-  
-  for(let x = 0; x < maze.length; x++)
-  {
-    if(maze[x].visited === true)
-	  {
-      ctx.beginPath();
-      ctx.fill();
-    }
-    if(maze[x].up === true)
-	  {
-      ctx.beginPath();
-      ctx.moveTo(maze[x].rowPos + half, maze[x].columnPos - h + half);
-      ctx.lineTo(maze[x].rowPos + w + half, maze[x].columnPos - h + half);
-      ctx.stroke();
-    }
-    if(maze[x].down === true)
-	  {
-      ctx.beginPath();
-      ctx.moveTo(maze[x].rowPos + half, maze[x].columnPos + half);
-      ctx.lineTo(maze[x].rowPos + w + half, maze[x].columnPos + half);
-      ctx.stroke();
-    }
-    if(maze[x].left === true)
-	  {
-      ctx.beginPath();
-      ctx.moveTo(maze[x].rowPos, maze[x].columnPos - extra);
-      ctx.lineTo(maze[x].rowPos, maze[x].columnPos - h);
-      ctx.stroke();
-    }
-    if(maze[x].right === true)
-	  {
-      ctx.beginPath();
-      ctx.moveTo(maze[x].rowPos + w, maze[x].columnPos + extra);
-      ctx.lineTo(maze[x].rowPos + w, maze[x].columnPos - h);
-      ctx.stroke();
+      AddLetter(index);
     }
   }
-  // fix borders so same width all around
-  // left border
-  ctx.beginPath();
-  ctx.moveTo(0 + half, 0 + half);
-  ctx.lineTo(0 + half, canvas.height + half);
-  ctx.stroke();
-  // bottom border
-  ctx.beginPath();
-  ctx.moveTo(0 - half, canvas.width - half);
-  ctx.lineTo(canvas.height - half, canvas.width - half);
-  ctx.stroke();
-  // right border
-  ctx.beginPath();
-  ctx.moveTo(canvas.height - half, canvas.width - half);
-  ctx.lineTo(canvas.height - half, 0 - half);
-  ctx.stroke();
-  // top border
-  ctx.beginPath();
-  ctx.moveTo(0 + half, 0 + half);
-  ctx.lineTo(canvas.height + half, 0 + half);
-  ctx.stroke();
 }
 
-function DrawRoute()
+canvas.ontouchstart = function(event)
 {
-  if(activePath.path.length === 0) return;
-  ctx.fillStyle = routeColour;
-  for(let i = 0; i < activePath.path.length; i++)
+  if(event.touches !== undefined && playing)
   {
-    ctx.fillRect(maze[activePath.path[i]].rowPos, maze[activePath.path[i]].columnPos - h, w + ctx.lineWidth / 16, h + ctx.lineWidth / 16);
-  }
-}
-
-function ClearPlayer()
-{
-  ctx.clearRect(player.x - w/3, player.y - h/3, w/1.5, h/1.5);
-}
-
-function DrawPlayer()
-{
-  const quarter = ctx.lineWidth / 4;
-  ctx.fillStyle = exitColour;
-  ctx.fillRect(maze[maze.length-1].rowPos + w/4 + quarter, maze[maze.length-1].columnPos - h/2 - h/4 + quarter, w/2, h/2);
-  ctx.fillStyle = playerColour;
-  ctx.fillRect(player.x - w/4 + quarter, player.y - h/4 + quarter, w/2, h/2);
-}
-
-// PLAYER MOVEMENT
-
-// KEYBOARD
-
-document.onkeydown = function(event)
-{
-  if(event.key === "d" || event.key === "ArrowRight") player.Move("RIGHT");
-  if(event.key === "s"  || event.key === "ArrowDown") player.Move("DOWN");
-  if(event.key === "a"  || event.key === "ArrowLeft") player.Move("LEFT");
-  if(event.key === "w"  || event.key === "ArrowUp") player.Move("UP");
-}
-
-// TOUCHPAD
-
-function TouchPad(DIRECTION)
-{
-  if(DIRECTION === "UP") player.Move("UP")
-  else if(DIRECTION === "DOWN") player.Move("DOWN");
-  else if(DIRECTION === "LEFT") player.Move("LEFT");
-  else if(DIRECTION === "RIGHT") player.Move("RIGHT");
-}
-
-// HIDE TOUCHPAD
-
-function HidePad()
-{
-  hideT = !hideT;
-  if(hideT)
-  {
-    footerControls.style.display = "none";
-  }
-  else
-  {
-    footerControls.style.display = "";
-  }
-  if(maze.length > 0)
-  {
-    ReSizeMaze();
-  }
-}
-
-function ReSizeMaze()
-{
-  if(hideT) factor = 0.925;
-  else factor = 0.625;
-
-  let vhFactor;
-  if(hideT) vhFactor = 92.5;
-  else vhFactor = 62.5;
-  
-  let screenWidth = window.innerWidth;
-  let screenHeight = window.innerHeight * factor;
-  let squareSize;
-  
-  if(screenWidth >= screenHeight) squareSize = screenHeight;
-  else squareSize = screenWidth;
-
-  gameDiv.style.height = 'calc(var(--vh) * ' + vhFactor + ')';
-  gameDiv.style.top = 'calc(var(--vh) * 7.5)';
-  gameDiv.style.display = 'flex';
-  gameDiv.style.justifyContent = 'center';
-  gameDiv.style.alignItems = 'center';
-  
-  squareSize = squareSize * 0.9;
-
-  cWidth = squareSize;
-  cHeight = squareSize;
-
-  canvas.width = cWidth;
-  canvas.height = cHeight;
-
-  size = width * height;
-  
-  w = canvas.width / width;
-  h = canvas.height / height;
-
-  let counter = 0;
-
-  for(let x = 0; x < width; x++)
-  {
-    for(let y = 0; y < height; y++)
-	  {
-      maze[counter].rowPos = x * w;
-      maze[counter].columnPos = y * h + h;
-      counter++;
-    }
-  }
-
-  player.x = maze[player.index].rowPos + w / 2;
-  player.y = maze[player.index].columnPos - h / 2;
-
-  if(maze.length > 0)
-  {
-    ClearMaze();
-    DrawMaze();
-    DrawRoute();
-    DrawPlayer();
-  }
-}
-
-// FLIP PAD
-
-function FlipPad()
-{
-  if(flipState === "center")
-  {
-    footerControls.style.justifyContent = "right";
-    flipState = "right";
-  }
-  else if (flipState === "right")
-  {
-    footerControls.style.justifyContent = "left";
-    flipState = "left";
-  }
-  else if (flipState === "left")
-  {
-    footerControls.style.justifyContent = "center";
-    flipState = "center";
-  }
-}
-
-class Path
-{
-  constructor()
-  {
-    this.path = [];
-    this.completed = false;
-  }
-}
-
-let paths = [];
-let activePath = new Path();
-let currentPath = new Path();
-
-function Find()
-{
-  paths = [];
-  let check = player.index;
-  let path = new Path();
-  path.path.push(check);
-  paths.push(path);
-  let done = false;
-  let iterator = 0;
-
-  while(!done)
-  {
-    iterator++;
-    if(iterator > 10000) break;
-
-    // if there are any paths, sort them and select the shortest one. Set check to the last position of that path.
-    if(paths.length > 0)
+    let touch = event.touches[0] || event.changedTouches[0];
+    let index = CheckButton(touch.clientX, touch.clientY);
+    if(index !== false)
     {
-      let smallest = paths[0].path.length;
-      let index = 0;
-      for(let i = 0; i < paths.length; i++)
-      {
-        if(paths[i].path.length < smallest)
-        {
-          smallest = paths[i].path.length;
-          index = i;
-        }
-      }
-      path = paths[index];
-      check = path.path[path.path.length - 1];
+      AddLetter(index);
     }
-
-    // is there a cell in that direction and don't backtrack
-    if(maze[check].left === false && !path.path.includes(maze[check].leftIndex))
-    {
-      if(maze[check].left === false) // can you walk to that cell
-      {
-        let newPath = new Path();
-        for(let i = 0; i < path.path.length; i++)
-        {
-          newPath.path.push(path.path[i]);
-        }
-        newPath.path.push(maze[check].leftIndex);
-        paths.push(newPath);
-        if(maze[maze[check].leftIndex].target === true) // is that cell the target destination, in which case end
-        {
-          newPath.completed = true;
-          currentPath = paths.indexOf(newPath);
-          activePath = newPath;
-          done = true;
-          break;
-        }
-      }
-    }
-    if(maze[check].right === false && !path.path.includes(maze[check].rightIndex))
-    {
-      if(maze[check].right === false) // can you walk to that cell
-      {
-        let newPath = new Path();
-        for(let i = 0; i < path.path.length; i++)
-        {
-          newPath.path.push(path.path[i]);
-        }
-        newPath.path.push(maze[check].rightIndex);
-        paths.push(newPath);
-        if(maze[maze[check].rightIndex].target === true) // is that cell the target destination, in which case end
-        {
-          newPath.completed = true;
-          currentPath = paths.indexOf(newPath);
-          activePath = newPath;
-          done = true;
-          break;
-        }
-      }
-    }
-    if(maze[check].up === false && !path.path.includes(maze[check].upIndex))
-    {
-      if(maze[check].up === false) // can you walk to that cell
-      {
-        let newPath = new Path();
-        for(let i = 0; i < path.path.length; i++)
-        {
-          newPath.path.push(path.path[i]);
-        }
-        newPath.path.push(maze[check].upIndex);
-        paths.push(newPath);
-        if(maze[maze[check].upIndex].target === true) // is that cell the target destination, in which case end
-        {
-          newPath.completed = true;
-          currentPath = paths.indexOf(newPath);
-          activePath = newPath;
-          done = true;
-          break;
-        }
-      }
-    }
-    if(maze[check].down === false && !path.path.includes(maze[check].downIndex))
-    {
-      if(maze[check].down === false) // can you walk to that cell
-      {
-        let newPath = new Path();
-        for(let i = 0; i < path.path.length; i++)
-        {
-          newPath.path.push(path.path[i]);
-        }
-        newPath.path.push(maze[check].downIndex);
-        paths.push(newPath);
-        if(maze[maze[check].downIndex].target === true) // is that cell the target destination, in which case end
-        {
-          newPath.completed = true;
-          currentPath = paths.indexOf(newPath);
-          activePath = newPath;
-          done = true;
-          break;
-        }
-      }
-    }
-    let removeAt = paths.indexOf(path);
-    paths.splice(removeAt, 1);
   }
-  ClearMaze();
-  DrawMaze();
-  DrawRoute();
-  DrawPlayer();
+};
+
+submitAnswerID.onkeyup = function(event)
+{
+  if(!playing)
+  {
+    submitAnswerID.value = "";
+    return;
+  }
+  CheckManualEntry();
+  if(event.key == "Enter") ValidateAnswer();
 }
 
-window.addEventListener('resize', ReSizeMaze);
-
-// Intialisation
-document.addEventListener('DOMContentLoaded', DefaultSettings);
+window.onresize = function() { if(playing) Draw(); };
+document.addEventListener("DOMContentLoaded", Start);
