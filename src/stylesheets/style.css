@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#gameDiv{
+  position: fixed;
+  width: 100%;
+  height: calc(var(--vh) * 62.5);
+  top: calc(var(--vh) * 7.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#footerControls{
+  position: fixed;
+  width: 100%;
+  height: calc(var(--vh) * 30);
+  top: calc(var(--vh) * 70);
+  display: flex;
+  justify-content: center;
+}
+
+#buttonHolder{
+  height: 100%;
+  width: 100%;
+  max-width: 300px;
+}
+
+#buttonHolder div{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: calc(var(--vh) * 10);
+  max-height: 100px;
+}
+
+#mid{
+  top: calc(var(--vh) * 10);
+}
+
+#bot{
+  top: calc(var(--vh) * 20);
+}
+
+.control{
+  height: 95%;
+  width: 95%;
+  max-width: 100px;
+  max-height: 100px;
+}
