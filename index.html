@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="./src/stylesheets/style.css">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
     <title>Word Wheel</title>
@@ -13,8 +13,8 @@
       <div class="flex flex-row justify-center items-center border-b border-black">
         <div class="flex w-full max-w-7xl h-full flex-row justify-center mx-auto sm:px-6 lg:px-8" style="height:calc(var(--vh) * 7.5)">
           <div id="ScoreDisplay" class="flex justify-center items-center mx-2 w-16 active:scale-95"></div>
-          <button id="PlayButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="./src/public/play.svg"></button>
-          <button id="PauseButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="./src/public/x.svg"></button>
+          <button id="PlayButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/play.svg"></button>
+          <button id="PauseButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/x.svg"></button>
           <div id="timerDisplay" class="flex justify-center items-center w-16 h-full mx-2"></div>
         </div>
       </div>
@@ -33,9 +33,9 @@
     
       <div id="botControls" class="flex flex-row justify-center items-center w-full bottom-2">
         <div class="mx-auto max-w-sm flex flex-row justify-center items-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='./src/public/chevronLeft.svg'></x-primary-button></div>
+          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronLeft.svg'></x-primary-button></div>
           <input type="text" id="submitAnswerID" name="submitAnswerID" class="w-full mx-2 rounded-lg h-4/6 border border-black py-2" value="" maxlength="9">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='./src/public/chevronRight.svg'></x-primary-button></div>
+          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronRight.svg'></x-primary-button></div>
         </div>
       </div>
     

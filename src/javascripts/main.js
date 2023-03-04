@@ -82,7 +82,7 @@ TogglePanel(PauseButton);
 // get the word list and parse it into the words array
 function Start()
 {
-  $.get('./src/assets/words.txt', function (data)
+  $.get('/wordwheel/words.txt', function (data)
   {
     words = data.split("\n");
     for(let i = 0; i < words.length; i++)
@@ -128,7 +128,7 @@ function NewGame()
     counter++;
     if(counter > 100)
     {
-      ToggleGame();
+      Pause();
       break;
     }
   }
