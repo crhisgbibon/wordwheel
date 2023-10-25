@@ -371,7 +371,7 @@ function Draw()
   c.height = w;
   c.fillStyle = "black";
   c.strokeStyle = "black";
-  c.lineWidth = 0.5;
+  c.lineWidth = 1.5;
   c.font = "16px Arial";
   c.textAlign = "center";
   c.textBaseline = 'middle';
@@ -389,23 +389,23 @@ function Draw()
   let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
   buttonPoints.push(startPoint);
   // line angles
-  let angles = [0, 45, 90, 135, 180, 225, 270, 315];
+  // let angles = [0, 45, 90, 135, 180, 225, 270, 315];
   // draw lines
-  for(let i = 0; i < angles.length; i++)
-  {
-    let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), DegreeToRad(angles[i]));
-    let endPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), DegreeToRad(angles[i]));
-    c.beginPath();
-    c.moveTo(startPoint.x, startPoint.y);
-    c.lineTo(endPoint.x, endPoint.y);
-    c.stroke();
-  }
+  // for(let i = 0; i < angles.length; i++)
+  // {
+  //   let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), DegreeToRad(angles[i]));
+  //   let endPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), DegreeToRad(angles[i]));
+  //   c.beginPath();
+  //   c.moveTo(startPoint.x, startPoint.y);
+  //   c.lineTo(endPoint.x, endPoint.y);
+  //   c.stroke();
+  // }
   // outer button positions
-  angles = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
+  let angles = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
   if(tempButtons.includes(0))
   {
     c.fillStyle = "rgba(" + col.r + " , " + col.g + " , " + col.b + ", 1)";
-    let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
+    let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth-1), c:choices[0], i:0};
     c.beginPath();
     c.arc(startPoint.x, startPoint.y, startPoint.r, 0, (2 * Math.PI));
     c.fill();
@@ -413,7 +413,7 @@ function Draw()
     c.fillText(choices[0].toUpperCase(), startPoint.x, startPoint.y);
   }
   let counter = 1;
-  c.strokeStyle = "grey";
+  c.strokeStyle = "black";
   // draw outer buttons
   for(let i = 0; i < angles.length; i++)
   {

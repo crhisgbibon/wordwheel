@@ -9,8 +9,28 @@
     <title>Word Wheel</title>
   </head>
   <body class='min-h-screen max-h-screen'>
+    
+      <div class="w-full border-b border-gray-100">
+        <div id="answerContainer" class="block overflow-y-auto mx-auto max-w-3xl" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)"></div>
+      </div>
 
-      <div class="flex flex-row justify-center items-center border-b border-black">
+      <div id="canvasContainer" class="mx-auto flex justify-center items-center" style="height:calc(var(--vh) * 35);max-height:calc(var(--vh) * 35)">
+        <canvas id="canvas"></canvas>
+      </div>
+    
+      <div class="w-full border-b border-gray-100">
+        <div id="responseDisplay" class="max-w-xs w-full mx-auto flex items-center justify-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)"></div>
+      </div>
+    
+      <div id="botControls" class="flex flex-row justify-center items-center w-full bottom-2">
+        <div class="mx-auto max-w-sm flex flex-row justify-center items-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
+          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronLeft.svg'></x-primary-button></div>
+          <input type="text" id="submitAnswerID" name="submitAnswerID" class="w-full mx-2 rounded-lg h-4/6 border border-black p-2" value="" maxlength="9">
+          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronRight.svg'></x-primary-button></div>
+        </div>
+      </div>
+    
+      <div class="flex flex-row justify-center items-center">
         <div class="flex w-full max-w-7xl h-full flex-row justify-center mx-auto sm:px-6 lg:px-8" style="height:calc(var(--vh) * 7.5)">
           <div id="ScoreDisplay" class="flex justify-center items-center mx-2 w-16 active:scale-95"></div>
           <button id="PlayButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/play.svg"></button>
@@ -18,27 +38,6 @@
           <div id="timerDisplay" class="flex justify-center items-center w-16 h-full mx-2"></div>
         </div>
       </div>
-    
-      <div class="w-full border-b border-gray-100">
-        <div id="responseDisplay" class="max-w-xs w-full mx-auto flex items-center justify-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)"></div>
-      </div>
-    
-      <div class="w-full border-b border-gray-100">
-        <div id="answerContainer" class="block overflow-y-auto mx-auto max-w-3xl" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)"></div>
-      </div>
-    
-      <div id="canvasContainer" class="mx-auto flex justify-center items-center" style="height:calc(var(--vh) * 35);max-height:calc(var(--vh) * 35)">
-        <canvas id="canvas"></canvas>
-      </div>
-    
-      <div id="botControls" class="flex flex-row justify-center items-center w-full bottom-2">
-        <div class="mx-auto max-w-sm flex flex-row justify-center items-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronLeft.svg'></x-primary-button></div>
-          <input type="text" id="submitAnswerID" name="submitAnswerID" class="w-full mx-2 rounded-lg h-4/6 border border-black py-2" value="" maxlength="9">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/chevronRight.svg'></x-primary-button></div>
-        </div>
-      </div>
-    
       
   </body>
   <script type='module' src="./src/javascripts/main.js"></script>
