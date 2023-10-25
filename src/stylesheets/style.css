@@ -1,9 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.answerButtons{
-  padding: 4px;
-  margin: 4px;
-  border-radius: 0.5rem;
-}
