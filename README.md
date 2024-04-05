@@ -1,3 +1,5 @@
-# <a href='https://crhisgbibon.github.io/wordwheel/' target='_blank'>Word Wheel</a>
+# <a href='https://crhisgbibon.github.io/wordwheel/' target='_blank'>word wheel</a>
 
-<p>Word puzzle generator.</p>
+share score and letter combo
+global daily
+stats tracker

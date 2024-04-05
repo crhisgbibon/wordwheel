@@ -21,6 +21,8 @@ const ScoreDisplay = document.getElementById("ScoreDisplay");
 const PlayButton = document.getElementById("PlayButton");
 const PauseButton = document.getElementById("PauseButton");
 
+const GlobeButton = document.getElementById("GlobeButton");
+
 const timerDisplay = document.getElementById("timerDisplay");
 
 // game messages
@@ -41,7 +43,11 @@ const submitAnswerID = document.getElementById("submitAnswerID");
 
 // assignments
 PlayButton.onclick = function(){ Play() };
-PauseButton.onclick = function(){ Pause() };
+PauseButton.onclick = function(){ if(window.confirm('End this game early?'))
+{
+  Pause();
+} };
+GlobeButton.onclick = function(){ StartGlobal() };
 
 submitButton.onclick = function(){ ValidateAnswer() };
 deleteButton.onclick = function(){ DeleteLetter() };
@@ -64,6 +70,7 @@ let gameTime = 300;
 // game information arrays
 // all possible words
 let words = [];
+let starter_words = [];
 
 // to pick the 9 letters
 let consonants = [];
@@ -76,6 +83,50 @@ let choices = [];
 let answers = [];
 // pool of possible answers
 let possibleAnswers = [];
+
+let shuffle_timer = null;
+
+let menu = {
+  '9':0,
+  '8':0,
+  '7':0,
+  '6':0,
+  '5':0,
+  '4':0,
+  '3':0,
+};
+
+let score_track = {
+  '9':0,
+  '8':0,
+  '7':0,
+  '6':0,
+  '5':0,
+  '4':0,
+  '3':0,
+};
+
+let alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+const MENU_IDS = [
+  document.getElementById('MENU_9'),
+  document.getElementById('MENU_8'),
+  document.getElementById('MENU_7'),
+  document.getElementById('MENU_6'),
+  document.getElementById('MENU_5'),
+  document.getElementById('MENU_4'),
+  document.getElementById('MENU_3'),
+];
+
+const MAX_IDS = [
+  document.getElementById('MAX_9'),
+  document.getElementById('MAX_8'),
+  document.getElementById('MAX_7'),
+  document.getElementById('MAX_6'),
+  document.getElementById('MAX_5'),
+  document.getElementById('MAX_4'),
+  document.getElementById('MAX_3'),
+];
 
 TogglePanel(PauseButton);
 
@@ -90,6 +141,8 @@ function Start()
       words[i] = words[i].replace("\n", "");
       words[i] = words[i].replace(" ", "");
       words[i] = words[i].replace(/\s/g, '');
+      words[i] = words[i].toUpperCase();
+      if(words[i].length === 9) starter_words.push(words[i]);
     }
   });
 }
@@ -119,12 +172,23 @@ function Pause()
 function NewGame()
 {
   answerContainer.innerHTML = '';
+  responseDisplay.innerHTML = '';
+  timerDisplay.style.color = 'black';
   let counter = 0;
   tempButtons.length = 0;
   possibleAnswers.length = 0;
+  answers.length = 0;
+  choices = null;
+  for(let i = 0; i < menu.length; i++)
+  {
+    menu[i] = 0;
+    score_track[i] = 0;
+  }
+
   while(possibleAnswers.length < 10)
   {
-    GetWords();
+    // GetWords();
+    GetWords2();
     counter++;
     if(counter > 100)
     {
@@ -133,6 +197,93 @@ function NewGame()
     }
   }
   ScoreDisplay.innerHTML = '<span style="color:var(--wordGot);">' + answers.length + '</span>' +'/' + '<span style="color:var(--wordMissed);">' +possibleAnswers.length + '</span>';
+  playing = true;
+  degradingInterval(RandomLetters, 0, 250, 25);
+}
+
+function degradingInterval(callback, initialDelay, maxDelay, step) {
+  let currentDelay = initialDelay;
+  
+  function execute() {
+      callback();
+      if (currentDelay < maxDelay) {
+          currentDelay += step;
+          setTimeout(execute, currentDelay);
+      }
+      else ActuallyBegin();
+  }
+  
+  if(currentDelay < maxDelay) execute();
+  else ActuallyBegin();
+}
+
+function RandomLetters()
+{
+  buttonPoints.length = 0;
+  c.clearRect(0,0,canvas.width,canvas.height);
+  let w = canvasContainer.scrollHeight * 0.9;
+  canvas.width = w;
+  canvas.height = w;
+  c.width = w;
+  c.height = w;
+  c.fillStyle = "black";
+  c.strokeStyle = "black";
+  c.lineWidth = 1.5;
+  c.font = "16px Lato";
+  c.textAlign = "center";
+  c.textBaseline = 'middle';
+  let buttonCircle = canvas.width/10;
+  // main circle
+  c.beginPath();
+  c.arc((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), 0, (2 * Math.PI));
+  c.stroke();
+  /// inner circle
+  c.beginPath();
+  c.arc((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), 0, (2 * Math.PI));
+  c.stroke();
+  // middle letter
+  c.fillText(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase(), (c.width/2), (c.height/2));
+  let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
+  buttonPoints.push(startPoint);
+  // outer button positions
+  let angles = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
+  if(tempButtons.includes(0))
+  {
+    c.fillStyle = "rgba(" + col.r + " , " + col.g + " , " + col.b + ", 1)";
+    let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth-1), c:choices[0], i:0};
+    c.beginPath();
+    c.arc(startPoint.x, startPoint.y, startPoint.r, 0, (2 * Math.PI));
+    c.fill();
+    c.fillStyle = "black";
+    c.fillText(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase(), startPoint.x, startPoint.y);
+  }
+  let counter = 1;
+  c.strokeStyle = "black";
+  // draw outer buttons
+  for(let i = 0; i < angles.length; i++)
+  {
+    let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/3)-c.lineWidth), DegreeToRad(angles[i]));
+    startPoint.c = choices[counter];
+    startPoint.i = counter;
+    if(tempButtons.includes(counter))
+    {
+      c.fillStyle = "rgba(" + col.r + " , " + col.g + " , " + col.b + ", 1)";
+      c.beginPath();
+      c.arc(startPoint.x, startPoint.y, buttonCircle, 0, (2 * Math.PI));
+      c.fill();
+    }
+    c.beginPath();
+    c.arc(startPoint.x, startPoint.y, buttonCircle, 0, (2 * Math.PI));
+    c.stroke();
+    c.fillStyle = "black";
+    c.fillText(alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase(), startPoint.x, startPoint.y);
+    counter++;
+    buttonPoints.push(startPoint);
+  }
+}
+
+function ActuallyBegin()
+{
   responseDisplay.innerHTML = 'Game Started.';
   AnimatePop(responseDisplay);
   Draw();
@@ -142,7 +293,86 @@ function NewGame()
   StartTimer();
   ShowTimer();
   col = RandomCol(200);
-  playing = true;
+}
+
+function GetWords2()
+{
+  const rand = Math.floor(Math.random() * starter_words.length);
+  const answer = starter_words[rand];
+
+  choices = shuffleArray(answer.split(''));
+
+  for(let i = 0; i < choices.length; i++)
+  {
+    choices[i] = choices[i].toUpperCase();
+  }
+
+  for(let key in score_track)
+  {
+    if(score_track.hasOwnProperty(key))
+    {
+      score_track[key] = 0;
+    }
+  }
+
+  for(let key in menu)
+  {
+    if(menu.hasOwnProperty(key))
+    {
+      menu[key] = 0;
+    }
+  }
+
+  let middle = choices[0].toString();
+  for(let i = 0; i < words.length; i++)
+  {
+    if(!words[i].includes(middle) || words[i].length > 9 || words[i].length < 3) continue;
+
+    let newList = [];
+    let thisWord = words[i];
+    let check = true;
+
+    for(let c = 0; c < choices.length; c++)
+    {
+      let newC = choices[c];
+      newList.push(newC);
+    }
+
+    for(let w = 0; w < thisWord.length; w++)
+    {
+      if(!newList.includes(thisWord[w])) check = false;
+      if(newList.includes(thisWord[w]))
+      {
+        let iOf = newList.indexOf(thisWord[w]);
+        newList.splice(iOf, 1);
+      }
+      if (newList.length < 0) check = false;
+    }
+
+    if(!check) continue;
+    else
+    {
+      possibleAnswers.push(thisWord);
+      menu[words[i].length]++;
+    }
+  }
+
+  for(let key in menu)
+  {
+    if(menu.hasOwnProperty(key))
+    {
+      document.getElementById('MENU_' + key).innerHTML = 0;
+      document.getElementById('MAX_' + key).innerHTML = menu[key];
+    }
+  }
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
 
 function GetWords()
@@ -213,6 +443,124 @@ function GetWords()
   }
 }
 
+function StartGlobal()
+{
+  let confirm = null;
+  if(playing)
+  {
+    window.alert('Cannot start global challenge when in a game.');
+    return;
+  }
+  else
+  {
+    confirm = window.confirm('Start global challenge?');
+  }
+  if(confirm === null || !confirm) return;
+
+  answerContainer.innerHTML = '';
+  responseDisplay.innerHTML = '';
+  timerDisplay.style.color = 'black';
+  let counter = 0;
+  tempButtons.length = 0;
+  possibleAnswers.length = 0;
+  answers.length = 0;
+  choices = null;
+  for(let i = 0; i < menu.length; i++)
+  {
+    menu[i] = 0;
+    score_track[i] = 0;
+  }
+
+  ScoreDisplay.innerHTML = '<span style="color:var(--wordGot);">' + answers.length + '</span>' +'/' + '<span style="color:var(--wordMissed);">' +possibleAnswers.length + '</span>';
+
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear() % 100;
+
+  const formattedDate = `${day}-${month < 10 ? '0' + month : month}-${year}`;
+
+  let hash = 0;
+  for(let i = 0; i < formattedDate.length; i++)
+  {
+    hash = (hash << 5) - hash + formattedDate.charCodeAt(i);
+  }
+
+  const rand = Math.abs(hash) % starter_words.length;
+
+  const answer = starter_words[rand];
+  console.log(answer);
+
+  choices = shuffleArray(answer.split(''));
+
+  for(let i = 0; i < choices.length; i++)
+  {
+    choices[i] = choices[i].toUpperCase();
+  }
+
+  for(let key in score_track)
+  {
+    if(score_track.hasOwnProperty(key))
+    {
+      score_track[key] = 0;
+    }
+  }
+
+  for(let key in menu)
+  {
+    if(menu.hasOwnProperty(key))
+    {
+      menu[key] = 0;
+    }
+  }
+
+  let middle = choices[0].toString();
+  for(let i = 0; i < words.length; i++)
+  {
+    if(!words[i].includes(middle) || words[i].length > 9 || words[i].length < 3) continue;
+
+    let newList = [];
+    let thisWord = words[i];
+    let check = true;
+
+    for(let c = 0; c < choices.length; c++)
+    {
+      let newC = choices[c];
+      newList.push(newC);
+    }
+
+    for(let w = 0; w < thisWord.length; w++)
+    {
+      if(!newList.includes(thisWord[w])) check = false;
+      if(newList.includes(thisWord[w]))
+      {
+        let iOf = newList.indexOf(thisWord[w]);
+        newList.splice(iOf, 1);
+      }
+      if (newList.length < 0) check = false;
+    }
+
+    if(!check) continue;
+    else
+    {
+      possibleAnswers.push(thisWord);
+      menu[words[i].length]++;
+    }
+  }
+
+  for(let key in menu)
+  {
+    if(menu.hasOwnProperty(key))
+    {
+      document.getElementById('MENU_' + key).innerHTML = 0;
+      document.getElementById('MAX_' + key).innerHTML = menu[key];
+    }
+  }
+
+  playing = true;
+  degradingInterval(RandomLetters, 0, 400, 50);
+}
+
 function ShuffleArray(array)
 {
   for(let i = array.length - 1; i > 0; i--)
@@ -235,6 +583,8 @@ function DegradeTimer()
   if(timer > 1)
   {
     timer--;
+    if(timer <= 60 && timerDisplay.style.color !== 'red') timerDisplay.style.color = 'red';
+    if(timer <= 15) AnimatePop(timerDisplay);
     ShowTimer();
   }
   else
@@ -331,7 +681,7 @@ function CheckManualEntry()
 
   for(let i = 0; i < newStr.length; i++)
   {
-    let search = newStr[i].toLowerCase();
+    let search = newStr[i].toUpperCase();
     if(search === choices[0])
     {
       validate = true;
@@ -362,6 +712,7 @@ function CheckManualEntry()
 
 function Draw()
 {
+  if(!playing) return;
   buttonPoints.length = 0;
   c.clearRect(0,0,canvas.width,canvas.height);
   let w = canvasContainer.scrollHeight * 0.9;
@@ -372,7 +723,7 @@ function Draw()
   c.fillStyle = "black";
   c.strokeStyle = "black";
   c.lineWidth = 1.5;
-  c.font = "16px Arial";
+  c.font = "16px Lato";
   c.textAlign = "center";
   c.textBaseline = 'middle';
   let buttonCircle = canvas.width/10;
@@ -439,9 +790,12 @@ function Draw()
 
 function RandomCol(floor)
 {
-  let r = (Math.floor(Math.random() * (255 - floor))) + floor;
-  let g = (Math.floor(Math.random() * (255 - floor))) + floor;
-  let b = (Math.floor(Math.random() * (255 - floor))) + floor;
+  // let r = (Math.floor(Math.random() * 100)) + 100;
+  // let g = (Math.floor(Math.random() * 100)) + 100;
+  // let b = (Math.floor(Math.random() * 100)) + 100;
+  let r = 150;
+  let g = 150;
+  let b = 255;
   return {r, g, b};
 }
 
@@ -487,6 +841,7 @@ function ValidateAnswer()
     answers.unshift(submission);
     submitAnswerID.value = '';
     ShowAnswersSoFar();
+    score_track[submission.length]++;
   }
   else if(possibleAnswers.includes(submission) && answers.includes(submission))
   {
@@ -501,6 +856,15 @@ function ValidateAnswer()
     submitAnswerID.value = '';
   }
   tempButtons.length = 0;
+
+  for(let key in menu)
+  {
+    if(menu.hasOwnProperty(key))
+    {
+      document.getElementById('MENU_' + key).innerHTML = score_track[key];
+    }
+  }
+
   Draw();
 }
 
@@ -534,22 +898,34 @@ function EndGame()
   submitAnswerID.value = '';
   responseDisplay.innerHTML = 'Game Ended.';
   AnimatePop(responseDisplay);
-  for(var i = 0; i < possibleAnswers.length; i++)
+  for(let m = 9; m >= 3; m--)
   {
-    var b2 = document.createElement("button");
-    b2.className = "answerButtons";
-    b2.style.fontSize = '20px';
-    if(answers.includes(possibleAnswers[i]))
+    let div = document.createElement('div');
+    div.className = 'seperator';
+    div.style.fontSize = '20px';
+    div.style.fontFamily = 'Bungee Inline';
+    div.innerHTML = m;
+    answerContainer.appendChild(div);
+    for(var i = 0; i < possibleAnswers.length; i++)
     {
-      b2.style.backgroundColor = 'rgb(150,150,255)';
+      if(possibleAnswers[i].length === m)
+      {
+        var b2 = document.createElement("button");
+        b2.className = "answerButtons";
+        b2.style.fontSize = '20px';
+        if(answers.includes(possibleAnswers[i]))
+        {
+          b2.style.backgroundColor = 'rgb(150,150,255)';
+        }
+        else
+        {
+          b2.style.backgroundColor = 'rgb(255,150,150)';
+        }
+        b2.innerHTML = possibleAnswers[i];
+        b2.onclick = GetDefinition;
+        answerContainer.appendChild(b2);
+      }
     }
-    else
-    {
-      b2.style.backgroundColor = 'rgb(255,150,150)';
-    }
-    b2.innerHTML = possibleAnswers[i];
-    b2.onclick = GetDefinition;
-    answerContainer.appendChild(b2);
   }
   timer = 0;
   clearInterval(interval);
@@ -588,6 +964,11 @@ canvas.ontouchstart = function(event)
     }
   }
 };
+
+submitAnswerID.oninput = function()
+{
+  submitAnswerID.value = submitAnswerID.value.toUpperCase();
+}
 
 submitAnswerID.onkeyup = function(event)
 {
