@@ -6,29 +6,65 @@
     <link rel="icon" href="/wordwheel/favicon.ico">
     
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Rye&display=swap" rel="stylesheet">
     <title>Word Wheel</title>
-    <script type="module" crossorigin src="/wordwheel/assets/index-c2b7aca3.js"></script>
-    <link rel="stylesheet" href="/wordwheel/assets/index-1a2e2b69.css">
+    <script type="module" crossorigin src="/wordwheel/assets/index-a7957bf8.js"></script>
+    <link rel="stylesheet" href="/wordwheel/assets/index-07e95955.css">
   </head>
-  <body class='min-h-screen max-h-screen'>
+  <body
+  x-data="{open:true,info:true}"
+  class='min-h-screen max-h-screen font-f_lato'>
+
+    <div x-show="info" class='flex flex-col justify-start items-center w-full'>
+      <h1 class='text-3xl font-f_bungee p-4 m-4'>Word Wheel</h1>
+
+      <p class='my-2 p-4'>Generate puzzles where you try to create words from a set of 9 letters.</p>
+
+      <p class='my-2 p-4'>Each guess can only use each letter once and must include the letter in the centre circle.</p>
+
+      <p class='my-2 p-4'>Play random puzzles or the global daily challenge.</p>
+
+      <button x-on:click="info=!info" class="flex justify-center items-center w-12 h-12 mx-2 active:scale-95"><img class='w-full h-full' src="/wordwheel/x.svg"></button>
+    </div>
+
+    <div x-show="!info" class='flex flex-col justify-start items-center w-full'>
     
-      <div class="w-full border-b border-gray-100">
+      <div x-show="open" class="w-full border-b border-gray-100">
         <div id="answerContainer" class="block overflow-y-auto mx-auto max-w-3xl" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)"></div>
       </div>
+
+      <div x-show="!open" class="w-full border-b border-gray-100">
+        <div id="optionsContainer" class="block overflow-y-auto mx-auto max-w-3xl flex flex-col justify-start items-center" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)">
+          
+          <div class='flex flex-row justify-center items-center w-full my-2 font-bold font-f_bungee text-xl'>Score</div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>9</div><div id="MENU_9" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_9" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>8</div><div id="MENU_8" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_8" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>7</div><div id="MENU_7" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_7" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>6</div><div id="MENU_6" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_6" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>5</div><div id="MENU_5" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_5" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>4</div><div id="MENU_4" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_4" class='w-16 text-center'>0</div></div>
+          <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>3</div><div id="MENU_3" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_3" class='w-16 text-center'>0</div></div>
+
+        </div>
+      </div>
+
 
       <div id="canvasContainer" class="mx-auto flex justify-center items-center" style="height:calc(var(--vh) * 35);max-height:calc(var(--vh) * 35)">
         <canvas id="canvas"></canvas>
       </div>
     
       <div class="w-full border-b border-gray-100">
-        <div id="responseDisplay" class="max-w-xs w-full mx-auto flex items-center justify-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)"></div>
+        <div id="responseDisplay" class="max-w-xs w-full mx-auto flex items-center justify-center font-f_bungee text-lg" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)"></div>
       </div>
     
       <div id="botControls" class="flex flex-row justify-center items-center w-full bottom-2">
         <div class="mx-auto max-w-sm flex flex-row justify-center items-center" style="height:calc(var(--vh) * 7.5);max-height:calc(var(--vh) * 7.5)">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/wordwheel/chevronLeft.svg'></x-primary-button></div>
+          <div class="flex justify-center items-center w-16 mx-2 h-full"><button id="deleteButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/wordwheel/chevronLeft.svg'></button></div>
           <input type="text" id="submitAnswerID" name="submitAnswerID" class="w-full mx-2 rounded-lg h-4/6 border border-black p-2" value="" maxlength="9">
-          <div class="flex justify-center items-center w-24 mx-2 h-full"><x-primary-button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/wordwheel/chevronRight.svg'></x-primary-button></div>
+          <div class="flex justify-center items-center w-16 mx-2 h-full"><button id="submitButton" class="active:scale-95 flex justify-center items-center w-11/12 h-4/6"><img class="w-3/4 h-3/4" src='/wordwheel/chevronRight.svg'></button></div>
         </div>
       </div>
     
@@ -37,9 +73,14 @@
           <div id="ScoreDisplay" class="flex justify-center items-center mx-2 w-16 active:scale-95"></div>
           <button id="PlayButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/play.svg"></button>
           <button id="PauseButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/x.svg"></button>
-          <div id="timerDisplay" class="flex justify-center items-center w-16 h-full mx-2"></div>
+          <button x-on:click="open=!open" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/options.svg"></button>
+          <button x-on:click="info=!info" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/info.svg"></button>
+          <button id="GlobeButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/globe.svg"></button>
+          <div class="flex justify-center items-center w-16 mx-2 overflow-hidden"><div id="timerDisplay" class="flex justify-center items-center w-full"></div></div>
         </div>
       </div>
+
+    </div>
       
   </body>
   
