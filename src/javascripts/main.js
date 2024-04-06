@@ -1,5 +1,39 @@
 "use strict";
 
+const svg_diamond = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19 8.5L17 5.5H14.5L15.5 8.5L12 18.5L19 8.5Z" stroke="#B9F2FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.37596 8.08397C4.1462 8.42862 4.23933 8.89427 4.58397 9.12404C4.92862 9.3538 5.39427 9.26067 5.62404 8.91603L4.37596 8.08397ZM7 5.5V4.75C6.74924 4.75 6.51506 4.87533 6.37596 5.08397L7 5.5ZM9.5 6.25C9.91421 6.25 10.25 5.91421 10.25 5.5C10.25 5.08579 9.91421 4.75 9.5 4.75V6.25ZM5.61442 8.0699C5.37689 7.73057 4.90924 7.64804 4.5699 7.88558C4.23057 8.12311 4.14804 8.59076 4.38558 8.9301L5.61442 8.0699ZM12 18.5L11.3856 18.9301C11.6004 19.237 12.0088 19.3383 12.3421 19.1674C12.6755 18.9965 12.8317 18.6058 12.7079 18.2522L12 18.5ZM9.20789 8.25224C9.07106 7.86128 8.6432 7.65527 8.25224 7.79211C7.86128 7.92894 7.65527 8.3568 7.79211 8.74776L9.20789 8.25224ZM5 7.75C4.58579 7.75 4.25 8.08579 4.25 8.5C4.25 8.91421 4.58579 9.25 5 9.25V7.75ZM8.5 9.25C8.91421 9.25 9.25 8.91421 9.25 8.5C9.25 8.08579 8.91421 7.75 8.5 7.75V9.25ZM10.2115 5.73717C10.3425 5.34421 10.1301 4.91947 9.73717 4.78849C9.34421 4.6575 8.91947 4.86987 8.78849 5.26283L10.2115 5.73717ZM7.78849 8.26283C7.6575 8.65579 7.86987 9.08053 8.26283 9.21151C8.65579 9.3425 9.08053 9.13013 9.21151 8.73717L7.78849 8.26283ZM9.5 4.75C9.08579 4.75 8.75 5.08579 8.75 5.5C8.75 5.91421 9.08579 6.25 9.5 6.25V4.75ZM14.5 6.25C14.9142 6.25 15.25 5.91421 15.25 5.5C15.25 5.08579 14.9142 4.75 14.5 4.75V6.25ZM8.5 7.75C8.08579 7.75 7.75 8.08579 7.75 8.5C7.75 8.91421 8.08579 9.25 8.5 9.25V7.75ZM19 9.25C19.4142 9.25 19.75 8.91421 19.75 8.5C19.75 8.08579 19.4142 7.75 19 7.75V9.25ZM5.62404 8.91603L7.62404 5.91603L6.37596 5.08397L4.37596 8.08397L5.62404 8.91603ZM7 6.25H9.5V4.75H7V6.25ZM4.38558 8.9301L11.3856 18.9301L12.6144 18.0699L5.61442 8.0699L4.38558 8.9301ZM12.7079 18.2522L9.20789 8.25224L7.79211 8.74776L11.2921 18.7478L12.7079 18.2522ZM5 9.25H8.5V7.75H5V9.25ZM8.78849 5.26283L7.78849 8.26283L9.21151 8.73717L10.2115 5.73717L8.78849 5.26283ZM9.5 6.25H14.5V4.75H9.5V6.25ZM8.5 9.25H19V7.75H8.5V9.25Z" fill="#B9F2FF"/>
+</svg>`;
+
+const svg_ruby = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19 8.5L17 5.5H14.5L15.5 8.5L12 18.5L19 8.5Z" stroke="#e0115f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.37596 8.08397C4.1462 8.42862 4.23933 8.89427 4.58397 9.12404C4.92862 9.3538 5.39427 9.26067 5.62404 8.91603L4.37596 8.08397ZM7 5.5V4.75C6.74924 4.75 6.51506 4.87533 6.37596 5.08397L7 5.5ZM9.5 6.25C9.91421 6.25 10.25 5.91421 10.25 5.5C10.25 5.08579 9.91421 4.75 9.5 4.75V6.25ZM5.61442 8.0699C5.37689 7.73057 4.90924 7.64804 4.5699 7.88558C4.23057 8.12311 4.14804 8.59076 4.38558 8.9301L5.61442 8.0699ZM12 18.5L11.3856 18.9301C11.6004 19.237 12.0088 19.3383 12.3421 19.1674C12.6755 18.9965 12.8317 18.6058 12.7079 18.2522L12 18.5ZM9.20789 8.25224C9.07106 7.86128 8.6432 7.65527 8.25224 7.79211C7.86128 7.92894 7.65527 8.3568 7.79211 8.74776L9.20789 8.25224ZM5 7.75C4.58579 7.75 4.25 8.08579 4.25 8.5C4.25 8.91421 4.58579 9.25 5 9.25V7.75ZM8.5 9.25C8.91421 9.25 9.25 8.91421 9.25 8.5C9.25 8.08579 8.91421 7.75 8.5 7.75V9.25ZM10.2115 5.73717C10.3425 5.34421 10.1301 4.91947 9.73717 4.78849C9.34421 4.6575 8.91947 4.86987 8.78849 5.26283L10.2115 5.73717ZM7.78849 8.26283C7.6575 8.65579 7.86987 9.08053 8.26283 9.21151C8.65579 9.3425 9.08053 9.13013 9.21151 8.73717L7.78849 8.26283ZM9.5 4.75C9.08579 4.75 8.75 5.08579 8.75 5.5C8.75 5.91421 9.08579 6.25 9.5 6.25V4.75ZM14.5 6.25C14.9142 6.25 15.25 5.91421 15.25 5.5C15.25 5.08579 14.9142 4.75 14.5 4.75V6.25ZM8.5 7.75C8.08579 7.75 7.75 8.08579 7.75 8.5C7.75 8.91421 8.08579 9.25 8.5 9.25V7.75ZM19 9.25C19.4142 9.25 19.75 8.91421 19.75 8.5C19.75 8.08579 19.4142 7.75 19 7.75V9.25ZM5.62404 8.91603L7.62404 5.91603L6.37596 5.08397L4.37596 8.08397L5.62404 8.91603ZM7 6.25H9.5V4.75H7V6.25ZM4.38558 8.9301L11.3856 18.9301L12.6144 18.0699L5.61442 8.0699L4.38558 8.9301ZM12.7079 18.2522L9.20789 8.25224L7.79211 8.74776L11.2921 18.7478L12.7079 18.2522ZM5 9.25H8.5V7.75H5V9.25ZM8.78849 5.26283L7.78849 8.26283L9.21151 8.73717L10.2115 5.73717L8.78849 5.26283ZM9.5 6.25H14.5V4.75H9.5V6.25ZM8.5 9.25H19V7.75H8.5V9.25Z" fill="#e0115f"/>
+</svg>`;
+
+const svg_emerald = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19 8.5L17 5.5H14.5L15.5 8.5L12 18.5L19 8.5Z" stroke="#50c878" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.37596 8.08397C4.1462 8.42862 4.23933 8.89427 4.58397 9.12404C4.92862 9.3538 5.39427 9.26067 5.62404 8.91603L4.37596 8.08397ZM7 5.5V4.75C6.74924 4.75 6.51506 4.87533 6.37596 5.08397L7 5.5ZM9.5 6.25C9.91421 6.25 10.25 5.91421 10.25 5.5C10.25 5.08579 9.91421 4.75 9.5 4.75V6.25ZM5.61442 8.0699C5.37689 7.73057 4.90924 7.64804 4.5699 7.88558C4.23057 8.12311 4.14804 8.59076 4.38558 8.9301L5.61442 8.0699ZM12 18.5L11.3856 18.9301C11.6004 19.237 12.0088 19.3383 12.3421 19.1674C12.6755 18.9965 12.8317 18.6058 12.7079 18.2522L12 18.5ZM9.20789 8.25224C9.07106 7.86128 8.6432 7.65527 8.25224 7.79211C7.86128 7.92894 7.65527 8.3568 7.79211 8.74776L9.20789 8.25224ZM5 7.75C4.58579 7.75 4.25 8.08579 4.25 8.5C4.25 8.91421 4.58579 9.25 5 9.25V7.75ZM8.5 9.25C8.91421 9.25 9.25 8.91421 9.25 8.5C9.25 8.08579 8.91421 7.75 8.5 7.75V9.25ZM10.2115 5.73717C10.3425 5.34421 10.1301 4.91947 9.73717 4.78849C9.34421 4.6575 8.91947 4.86987 8.78849 5.26283L10.2115 5.73717ZM7.78849 8.26283C7.6575 8.65579 7.86987 9.08053 8.26283 9.21151C8.65579 9.3425 9.08053 9.13013 9.21151 8.73717L7.78849 8.26283ZM9.5 4.75C9.08579 4.75 8.75 5.08579 8.75 5.5C8.75 5.91421 9.08579 6.25 9.5 6.25V4.75ZM14.5 6.25C14.9142 6.25 15.25 5.91421 15.25 5.5C15.25 5.08579 14.9142 4.75 14.5 4.75V6.25ZM8.5 7.75C8.08579 7.75 7.75 8.08579 7.75 8.5C7.75 8.91421 8.08579 9.25 8.5 9.25V7.75ZM19 9.25C19.4142 9.25 19.75 8.91421 19.75 8.5C19.75 8.08579 19.4142 7.75 19 7.75V9.25ZM5.62404 8.91603L7.62404 5.91603L6.37596 5.08397L4.37596 8.08397L5.62404 8.91603ZM7 6.25H9.5V4.75H7V6.25ZM4.38558 8.9301L11.3856 18.9301L12.6144 18.0699L5.61442 8.0699L4.38558 8.9301ZM12.7079 18.2522L9.20789 8.25224L7.79211 8.74776L11.2921 18.7478L12.7079 18.2522ZM5 9.25H8.5V7.75H5V9.25ZM8.78849 5.26283L7.78849 8.26283L9.21151 8.73717L10.2115 5.73717L8.78849 5.26283ZM9.5 6.25H14.5V4.75H9.5V6.25ZM8.5 9.25H19V7.75H8.5V9.25Z" fill="#50c878"/>
+</svg>`;
+
+const svg_sapphire = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19 8.5L17 5.5H14.5L15.5 8.5L12 18.5L19 8.5Z" stroke="#0f52ba" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.37596 8.08397C4.1462 8.42862 4.23933 8.89427 4.58397 9.12404C4.92862 9.3538 5.39427 9.26067 5.62404 8.91603L4.37596 8.08397ZM7 5.5V4.75C6.74924 4.75 6.51506 4.87533 6.37596 5.08397L7 5.5ZM9.5 6.25C9.91421 6.25 10.25 5.91421 10.25 5.5C10.25 5.08579 9.91421 4.75 9.5 4.75V6.25ZM5.61442 8.0699C5.37689 7.73057 4.90924 7.64804 4.5699 7.88558C4.23057 8.12311 4.14804 8.59076 4.38558 8.9301L5.61442 8.0699ZM12 18.5L11.3856 18.9301C11.6004 19.237 12.0088 19.3383 12.3421 19.1674C12.6755 18.9965 12.8317 18.6058 12.7079 18.2522L12 18.5ZM9.20789 8.25224C9.07106 7.86128 8.6432 7.65527 8.25224 7.79211C7.86128 7.92894 7.65527 8.3568 7.79211 8.74776L9.20789 8.25224ZM5 7.75C4.58579 7.75 4.25 8.08579 4.25 8.5C4.25 8.91421 4.58579 9.25 5 9.25V7.75ZM8.5 9.25C8.91421 9.25 9.25 8.91421 9.25 8.5C9.25 8.08579 8.91421 7.75 8.5 7.75V9.25ZM10.2115 5.73717C10.3425 5.34421 10.1301 4.91947 9.73717 4.78849C9.34421 4.6575 8.91947 4.86987 8.78849 5.26283L10.2115 5.73717ZM7.78849 8.26283C7.6575 8.65579 7.86987 9.08053 8.26283 9.21151C8.65579 9.3425 9.08053 9.13013 9.21151 8.73717L7.78849 8.26283ZM9.5 4.75C9.08579 4.75 8.75 5.08579 8.75 5.5C8.75 5.91421 9.08579 6.25 9.5 6.25V4.75ZM14.5 6.25C14.9142 6.25 15.25 5.91421 15.25 5.5C15.25 5.08579 14.9142 4.75 14.5 4.75V6.25ZM8.5 7.75C8.08579 7.75 7.75 8.08579 7.75 8.5C7.75 8.91421 8.08579 9.25 8.5 9.25V7.75ZM19 9.25C19.4142 9.25 19.75 8.91421 19.75 8.5C19.75 8.08579 19.4142 7.75 19 7.75V9.25ZM5.62404 8.91603L7.62404 5.91603L6.37596 5.08397L4.37596 8.08397L5.62404 8.91603ZM7 6.25H9.5V4.75H7V6.25ZM4.38558 8.9301L11.3856 18.9301L12.6144 18.0699L5.61442 8.0699L4.38558 8.9301ZM12.7079 18.2522L9.20789 8.25224L7.79211 8.74776L11.2921 18.7478L12.7079 18.2522ZM5 9.25H8.5V7.75H5V9.25ZM8.78849 5.26283L7.78849 8.26283L9.21151 8.73717L10.2115 5.73717L8.78849 5.26283ZM9.5 6.25H14.5V4.75H9.5V6.25ZM8.5 9.25H19V7.75H8.5V9.25Z" fill="#0f52ba"/>
+</svg>`;
+
+const svg_star = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 24 24" fill="#ffff00" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41394 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+const svg_star_2 = `<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="24" viewBox="0 0 24 24" fill="#ffff00" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41394 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
 function CalculateVh()
 {
   let vh = window.innerHeight * 0.01;
@@ -25,6 +59,8 @@ const GlobeButton = document.getElementById("GlobeButton");
 
 const timerDisplay = document.getElementById("timerDisplay");
 
+const STAT_OUTPUT = document.getElementById("STAT_OUTPUT");
+
 // game messages
 const responseDisplay = document.getElementById("responseDisplay");
 
@@ -43,10 +79,16 @@ const submitAnswerID = document.getElementById("submitAnswerID");
 
 // assignments
 PlayButton.onclick = function(){ Play() };
-PauseButton.onclick = function(){ if(window.confirm('End this game early?'))
-{
-  Pause();
-} };
+PauseButton.onclick = function(){
+  if(playing)
+  {
+    if(window.confirm('End this game early?'))
+    {
+      Pause();
+    }
+  }
+  else Pause();
+};
 GlobeButton.onclick = function(){ StartGlobal() };
 
 submitButton.onclick = function(){ ValidateAnswer() };
@@ -106,6 +148,292 @@ let score_track = {
   '3':0,
 };
 
+class Archive
+{
+  constructor()
+  {
+    this.init();
+    this.get();
+    this.print();
+  }
+
+  check_has_played_global()
+  {
+    let today = this.today_date();
+    let last = get_storage('last_global');
+    if(today === last) return true;
+    else return false;
+  }
+
+  completed_global()
+  {
+    let today = this.today_date();
+    set_storage('last_global', today);
+  }
+
+  today_date()
+  {
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+    return dd + '-' + mm + '-' + yyyy;
+  }
+
+  init()
+  {
+    if(get_storage('games_played') === null) set_storage('games_played', 0);
+    if(get_storage('games_random') === null) set_storage('games_random', 0);
+    if(get_storage('games_daily') === null) set_storage('games_daily', 0);
+  
+    if(get_storage('stats_total_9') === null) set_storage('stats_total_9', 0);
+    if(get_storage('stats_total_8') === null) set_storage('stats_total_8', 0);
+    if(get_storage('stats_total_7') === null) set_storage('stats_total_7', 0);
+    if(get_storage('stats_total_6') === null) set_storage('stats_total_6', 0);
+    if(get_storage('stats_total_5') === null) set_storage('stats_total_5', 0);
+    if(get_storage('stats_total_4') === null) set_storage('stats_total_4', 0);
+    if(get_storage('stats_total_3') === null) set_storage('stats_total_3', 0);
+  
+    if(get_storage('stats_got_9') === null) set_storage('stats_got_9', 0);
+    if(get_storage('stats_got_8') === null) set_storage('stats_got_8', 0);
+    if(get_storage('stats_got_7') === null) set_storage('stats_got_7', 0);
+    if(get_storage('stats_got_6') === null) set_storage('stats_got_6', 0);
+    if(get_storage('stats_got_5') === null) set_storage('stats_got_5', 0);
+    if(get_storage('stats_got_4') === null) set_storage('stats_got_4', 0);
+    if(get_storage('stats_got_3') === null) set_storage('stats_got_3', 0);
+  
+    if(get_storage('diamond') === null) set_storage('diamond', 0);
+    if(get_storage('ruby') === null) set_storage('ruby', 0);
+    if(get_storage('emerald') === null) set_storage('emerald', 0);
+    if(get_storage('sapphire') === null) set_storage('sapphire', 0);
+  
+    if(get_storage('star_5') === null) set_storage('star_5', 0);
+    if(get_storage('star_4') === null) set_storage('star_4', 0);
+    if(get_storage('star_3') === null) set_storage('star_3', 0);
+    if(get_storage('star_2') === null) set_storage('star_2', 0);
+    if(get_storage('star_1') === null) set_storage('star_1', 0);
+  
+    if(get_storage('streak') === null) set_storage('streak', 0);
+    if(get_storage('streak_max') === null) set_storage('streak_max', 0);
+    if(get_storage('last_global') === null) set_storage('last_global', '01-01-1970');
+  }
+
+  get()
+  {
+    this.games_played = parseInt(get_storage('games_played'));
+    this.games_random = parseInt(get_storage('games_random'));
+    this.games_daily = parseInt(get_storage('games_daily'));
+
+    this.stats_total_9 = parseInt(get_storage('stats_total_9'));
+    this.stats_total_8 = parseInt(get_storage('stats_total_8'));
+    this.stats_total_7 = parseInt(get_storage('stats_total_7'));
+    this.stats_total_6 = parseInt(get_storage('stats_total_6'));
+    this.stats_total_5 = parseInt(get_storage('stats_total_5'));
+    this.stats_total_4 = parseInt(get_storage('stats_total_4'));
+    this.stats_total_3 = parseInt(get_storage('stats_total_3'));
+
+    this.stats_got_9 = parseInt(get_storage('stats_got_9'));
+    this.stats_got_8 = parseInt(get_storage('stats_got_8'));
+    this.stats_got_7 = parseInt(get_storage('stats_got_7'));
+    this.stats_got_6 = parseInt(get_storage('stats_got_6'));
+    this.stats_got_5 = parseInt(get_storage('stats_got_5'));
+    this.stats_got_4 = parseInt(get_storage('stats_got_4'));
+    this.stats_got_3 = parseInt(get_storage('stats_got_3'));
+
+    this.diamond = parseInt(get_storage('diamond'));
+    this.ruby = parseInt(get_storage('ruby'));
+    this.emerald = parseInt(get_storage('emerald'));
+    this.sapphire = parseInt(get_storage('sapphire'));
+
+    this.star_5 = parseInt(get_storage('star_5'));
+    this.star_4 = parseInt(get_storage('star_4'));
+    this.star_3 = parseInt(get_storage('star_3'));
+    this.star_2 = parseInt(get_storage('star_2'));
+    this.star_1 = parseInt(get_storage('star_1'));
+
+    this.streak = parseInt(get_storage('streak'));
+    this.streak_max = parseInt(get_storage('streak_max'));
+  }
+
+  print()
+  {
+    STAT_OUTPUT.innerHTML = '';
+
+    for(let key in this)
+    {
+      if(this.hasOwnProperty(key))
+      {
+        if(key.startsWith('stats') || key.startsWith('streak') || key.startsWith('games_random') || key.startsWith('games_daily')) continue;
+
+        let div = document.createElement('div');
+        div.className = 'w-full flex flex-row justify-center items-center mb-4';
+
+        let stat_name = document.createElement('div');
+        stat_name.className = 'mx-2 flex justify-center items-center text-md';
+        stat_name.style.width = '560px';
+
+        if(key === 'diamond')
+        {
+          stat_name.innerHTML = svg_diamond.trim();
+          stat_name.className += ' h-20';
+        }
+        if(key === 'ruby')
+        {
+          stat_name.innerHTML = svg_ruby.trim();
+          stat_name.className += ' h-20';
+        }
+        if(key === 'emerald')
+        {
+          stat_name.innerHTML = svg_emerald.trim();
+          stat_name.className += ' h-20';
+        }
+        if(key === 'sapphire')
+        {
+          stat_name.innerHTML = svg_sapphire.trim();
+          stat_name.className += ' h-20';
+        }
+        if(key === 'star_5')
+        {
+          for(let i = 0; i < 5; i++)
+          {
+            stat_name.innerHTML += svg_star.trim();
+          }
+          stat_name.className += ' h-20';
+        }
+        if(key === 'star_4')
+        {
+          for(let i = 0; i < 4; i++)
+          {
+            stat_name.innerHTML += svg_star.trim();
+          }
+          stat_name.className += ' h-20';
+        }
+        if(key === 'star_3')
+        {
+          for(let i = 0; i < 3; i++)
+          {
+            stat_name.innerHTML += svg_star.trim();
+          }
+          stat_name.className += ' h-20';
+        }
+        if(key === 'star_2')
+        {
+          for(let i = 0; i < 2; i++)
+          {
+            stat_name.innerHTML += svg_star.trim();
+          }
+          stat_name.className += ' h-20';
+        }
+        if(key === 'star_1')
+        {
+          stat_name.innerHTML += svg_star.trim();
+          stat_name.className += ' h-28';
+        }
+        if(key === 'games_played')
+        {
+          stat_name.innerHTML = 'Games Played';
+        }
+
+        let stat_value = document.createElement('div');
+        stat_value.innerHTML = this[key];
+        stat_value.className = 'mr-2 ml-8';
+
+        div.appendChild(stat_value);
+        div.appendChild(stat_name);
+        STAT_OUTPUT.appendChild(div);
+      }
+    }
+
+    let reset_stats = document.createElement('button');
+    reset_stats.className = 'm-2 p-2 text-white cursor-pointer border border-stone-900 rounded-lg bg-stone-800 hover:bg-stone-600 transition ease-in-out duration-300';
+    reset_stats.innerHTML = 'reset';
+    reset_stats.style.fontSize = '16px';
+    reset_stats.onclick = function() { window.archive.reset(); };
+    STAT_OUTPUT.appendChild(reset_stats);
+  }
+
+  reset()
+  {
+    let confirm = window.confirm('Reset all of your stats? These cannot be recovered.')
+    if(confirm)
+    {
+      set_storage('games_played', 0);
+      set_storage('games_random', 0);
+      set_storage('games_daily', 0);
+    
+      set_storage('stats_total_9', 0);
+      set_storage('stats_total_8', 0);
+      set_storage('stats_total_7', 0);
+      set_storage('stats_total_6', 0);
+      set_storage('stats_total_5', 0);
+      set_storage('stats_total_4', 0);
+      set_storage('stats_total_3', 0);
+    
+      set_storage('stats_got_9', 0);
+      set_storage('stats_got_8', 0);
+      set_storage('stats_got_7', 0);
+      set_storage('stats_got_6', 0);
+      set_storage('stats_got_5', 0);
+      set_storage('stats_got_4', 0);
+      set_storage('stats_got_3', 0);
+    
+      set_storage('diamond', 0);
+      set_storage('ruby', 0);
+      set_storage('emerald', 0);
+      set_storage('sapphire', 0);
+    
+      set_storage('star_5', 0);
+      set_storage('star_4', 0);
+      set_storage('star_3', 0);
+      set_storage('star_2', 0);
+      set_storage('star_1', 0);
+    
+      set_storage('streak', 0);
+      set_storage('streak_max', 0);
+
+      this.get();
+      this.print();
+    }
+  }
+
+  save()
+  {
+    set_storage('games_played', this.games_played);
+    set_storage('games_random', this.games_random);
+    set_storage('games_daily', this.games_daily);
+
+    set_storage('stats_total_9', this.stats_total_9);
+    set_storage('stats_total_8', this.stats_total_8);
+    set_storage('stats_total_7', this.stats_total_7);
+    set_storage('stats_total_6', this.stats_total_6);
+    set_storage('stats_total_5', this.stats_total_5);
+    set_storage('stats_total_4', this.stats_total_4);
+    set_storage('stats_total_3', this.stats_total_3);
+
+    set_storage('stats_got_9', this.stats_got_9);
+    set_storage('stats_got_8', this.stats_got_8);
+    set_storage('stats_got_7', this.stats_got_7);
+    set_storage('stats_got_6', this.stats_got_6);
+    set_storage('stats_got_5', this.stats_got_5);
+    set_storage('stats_got_4', this.stats_got_4);
+    set_storage('stats_got_3', this.stats_got_3);
+
+    set_storage('diamond', this.diamond);
+    set_storage('ruby', this.ruby);
+    set_storage('emerald', this.emerald);
+    set_storage('sapphire', this.sapphire);
+
+    set_storage('star_5', this.star_5);
+    set_storage('star_4', this.star_4);
+    set_storage('star_3', this.star_3);
+    set_storage('star_2', this.star_2);
+    set_storage('star_1', this.star_1);
+
+    set_storage('streak', this.streak);
+    set_storage('streak_max', this.streak_max);
+  }
+}
+
 let alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
 const MENU_IDS = [
@@ -133,6 +461,7 @@ TogglePanel(PauseButton);
 // get the word list and parse it into the words array
 function Start()
 {
+  window.archive = new Archive();
   $.get('/wordwheel/words.txt', function (data)
   {
     words = data.split("\n");
@@ -199,6 +528,9 @@ function NewGame()
   ScoreDisplay.innerHTML = '<span style="color:var(--wordGot);">' + answers.length + '</span>' +'/' + '<span style="color:var(--wordMissed);">' +possibleAnswers.length + '</span>';
   playing = true;
   degradingInterval(RandomLetters, 0, 250, 25);
+  window.archive.games_played++;
+  window.archive.games_random++;
+  window.archive.save();
 }
 
 function degradingInterval(callback, initialDelay, maxDelay, step) {
@@ -286,6 +618,7 @@ function ActuallyBegin()
 {
   responseDisplay.innerHTML = 'Game Started.';
   AnimatePop(responseDisplay);
+  AnimatePop(canvas);
   Draw();
   clearInterval(interval);
   interval = undefined;
@@ -453,7 +786,16 @@ function StartGlobal()
   }
   else
   {
-    confirm = window.confirm('Start global challenge?');
+
+    if(window.archive.check_has_played_global())
+    {
+      window.alert('You have already played today, come back tomorrow!');
+      return;
+    }
+    else
+    {
+      confirm = window.confirm('Start daily global challenge?');
+    }
   }
   if(confirm === null || !confirm) return;
 
@@ -489,7 +831,6 @@ function StartGlobal()
   const rand = Math.abs(hash) % starter_words.length;
 
   const answer = starter_words[rand];
-  console.log(answer);
 
   choices = shuffleArray(answer.split(''));
 
@@ -559,6 +900,10 @@ function StartGlobal()
 
   playing = true;
   degradingInterval(RandomLetters, 0, 400, 50);
+  window.archive.completed_global();
+  window.archive.games_played++;
+  window.archive.games_daily++;
+  window.archive.save();
 }
 
 function ShuffleArray(array)
@@ -706,6 +1051,7 @@ function CheckManualEntry()
       tempButtons.push(iOf);
     }
   }
+
   Draw();
   return validate;
 }
@@ -739,18 +1085,6 @@ function Draw()
   c.fillText(choices[0].toUpperCase(), (c.width/2), (c.height/2));
   let startPoint = {x:(c.width/2), y:(c.height/2), r:((c.width/5)-c.lineWidth), c:choices[0], i:0};
   buttonPoints.push(startPoint);
-  // line angles
-  // let angles = [0, 45, 90, 135, 180, 225, 270, 315];
-  // draw lines
-  // for(let i = 0; i < angles.length; i++)
-  // {
-  //   let startPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/5)-c.lineWidth), DegreeToRad(angles[i]));
-  //   let endPoint = GetCirclePoint((c.width/2), (c.height/2), ((c.width/2)-c.lineWidth * 4), DegreeToRad(angles[i]));
-  //   c.beginPath();
-  //   c.moveTo(startPoint.x, startPoint.y);
-  //   c.lineTo(endPoint.x, endPoint.y);
-  //   c.stroke();
-  // }
   // outer button positions
   let angles = [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5];
   if(tempButtons.includes(0))
@@ -822,6 +1156,7 @@ function AnimatePop(panel)
 function ValidateAnswer()
 {
   if(!playing) return;
+  let right_answer = false;
   let submission = submitAnswerID.value;
   if(submission.length == 0) return;
   for(let i = 0; i < submission.length; i++)
@@ -842,6 +1177,7 @@ function ValidateAnswer()
     submitAnswerID.value = '';
     ShowAnswersSoFar();
     score_track[submission.length]++;
+    right_answer = true;
   }
   else if(possibleAnswers.includes(submission) && answers.includes(submission))
   {
@@ -894,9 +1230,10 @@ function GetDefinition(event)
 
 function EndGame()
 {
+  PlayButton.style.display = '';
+  PauseButton.style.display = 'none';
   answerContainer.innerHTML = '';
   submitAnswerID.value = '';
-  responseDisplay.innerHTML = 'Game Ended.';
   AnimatePop(responseDisplay);
   for(let m = 9; m >= 3; m--)
   {
@@ -934,6 +1271,72 @@ function EndGame()
   tempButtons.length = 0;
   Draw();
   playing = false;
+
+  let percent = Math.ceil((100/possibleAnswers.length) * answers.length);
+
+  if(percent === 0)
+  {
+    responseDisplay.innerHTML = 'Game Terminated.';
+    return;
+  }
+  else
+  {
+    responseDisplay.innerHTML = 'Game Ended.';
+
+    for(let i = 0; i < percent; i += 20)
+    {
+      let div = document.createElement('div');
+      div.innerHTML = svg_star_2;
+      div.className = 'flex justify-center items-center mx-2 h-full'
+      div.style.width = '25px';
+      responseDisplay.appendChild(div);
+    }
+  }
+
+  window.archive.ruby += get_value_or_zero('MENU_9');
+  window.archive.emerald += get_value_or_zero('MENU_8');
+  window.archive.sapphire += get_value_or_zero('MENU_7');
+
+  window.archive.stats_got_9 += get_value_or_zero('MENU_9');
+  window.archive.stats_got_8 += get_value_or_zero('MENU_8');
+  window.archive.stats_got_7 += get_value_or_zero('MENU_7');
+  window.archive.stats_got_6 += get_value_or_zero('MENU_6');
+  window.archive.stats_got_5 += get_value_or_zero('MENU_5');
+  window.archive.stats_got_4 += get_value_or_zero('MENU_4');
+  window.archive.stats_got_3 += get_value_or_zero('MENU_3');
+
+  window.archive.stats_total_9 += get_value_or_zero('MAX_9');
+  window.archive.stats_total_8 += get_value_or_zero('MAX_8');
+  window.archive.stats_total_7 += get_value_or_zero('MAX_7');
+  window.archive.stats_total_6 += get_value_or_zero('MAX_6');
+  window.archive.stats_total_5 += get_value_or_zero('MAX_5');
+  window.archive.stats_total_4 += get_value_or_zero('MAX_4');
+  window.archive.stats_total_3 += get_value_or_zero('MAX_3');
+
+  if(percent >= 100) window.archive.diamond++;
+  else if(percent < 100 && percent >= 80) window.archive.star_5++;
+  else if(percent < 80 && percent >= 60) window.archive.star_4++;
+  else if(percent < 60 && percent >= 40) window.archive.star_3++;
+  else if(percent < 40 && percent >= 20) window.archive.star_2++;
+  else if(percent < 20 && percent >= 0) window.archive.star_1++;
+  window.archive.save();
+  window.archive.print();
+}
+
+function get_value_or_zero(ref)
+{
+  let value = document.getElementById(ref).innerHTML;
+  return (value === null) ? 0 : parseInt(value);
+}
+
+function set_storage(key, value)
+{
+  localStorage.setItem(key, value);
+}
+
+function get_storage(key)
+{
+  return (localStorage.getItem(key)) ? localStorage.getItem(key) : null;
 }
 
 canvas.onmousedown = function(event)
