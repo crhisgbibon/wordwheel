@@ -11,26 +11,91 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Rye&display=swap" rel="stylesheet">
     <title>Word Wheel</title>
-    <script type="module" crossorigin src="/wordwheel/assets/index-a7957bf8.js"></script>
-    <link rel="stylesheet" href="/wordwheel/assets/index-07e95955.css">
+    <script type="module" crossorigin src="/wordwheel/assets/index-9fb5a654.js"></script>
+    <link rel="stylesheet" href="/wordwheel/assets/index-9188bd43.css">
   </head>
   <body
-  x-data="{open:true,info:true}"
+  x-data="{open:true,info:1}"
   class='min-h-screen max-h-screen font-f_lato'>
 
-    <div x-show="info" class='flex flex-col justify-start items-center w-full'>
-      <h1 class='text-3xl font-f_bungee p-4 m-4'>Word Wheel</h1>
+    <div hidden class='w-28 h-28 w-20 h-20 w-28 h-28 ml-8 mr-2 m-2 p-2 text-white mb-4 cursor-pointer border border-stone-900 rounded-lg bg-stone-800 hover:bg-stone-600 transition ease-in-out duration-300'></div>
 
-      <p class='my-2 p-4'>Generate puzzles where you try to create words from a set of 9 letters.</p>
+    <div x-show="info===1" class='flex flex-col justify-start items-center w-full max-w-3xl mx-auto'>
 
-      <p class='my-2 p-4'>Each guess can only use each letter once and must include the letter in the centre circle.</p>
+      <div
+      class="w-full flex justify-center items-center">
+        <h1 class='text-3xl font-f_bungee p-4 m-4'>Word Wheel</h1>
+        <button x-on:click="info=3" class="flex justify-center items-center w-10 h-10 mx-2 active:scale-95"><img class='w-full h-full' src="/wordwheel/x.svg"></button>
+      </div>
 
-      <p class='my-2 p-4'>Play random puzzles or the global daily challenge.</p>
+      <p class='mb-2 p-2 w-full flex justify-left items-center'>Play puzzles where you try to find words from a set of 9 letters.</p>
 
-      <button x-on:click="info=!info" class="flex justify-center items-center w-12 h-12 mx-2 active:scale-95"><img class='w-full h-full' src="/wordwheel/x.svg"></button>
+      <p class='mb-2 p-2 w-full flex justify-left items-center'>Each guess can only use each letter once and must include the letter in the centre circle.</p>
+
+      <p class='mb-2 p-2 w-full flex justify-left items-center'>Guesses must be a minimum of at least 3 letters long.</p>
+
+      <p class='mb-2 p-2 w-full flex justify-left items-center'>Play random puzzles or a global daily game.</p>
+
+      <div
+      class="w-full flex justify-center items-center">
+        <h1 class='text-xl font-f_bungee p-2 m-2'>Stats</h1>
+        <button x-on:click="info=2" class="flex justify-center items-center w-10 h-10 mx-2 active:scale-95"><img class='w-full h-full' src="/wordwheel/chevronRight.svg"></button>
+      </div>
+
+      <div
+      class="w-full flex justify-center items-center">
+        <h1 class='text-md font-f_bungee p-2 m-2'>Glossary</h1>
+      </div>
+
+      <div
+      class='w-full flex flex-row justify-center items-center'>
+        <img class='w-16 h-16' src="/wordwheel/star.svg">
+        <p class='mb-2 p-2 w-full flex justify-left items-center'>Stars are awarded for your percentage of correct answers at the end of a game.</p>
+      </div>
+
+      <div
+      class='w-full flex flex-row justify-center items-center'>
+        <img class='w-16 h-16' src="/wordwheel/diamond.svg">
+        <p class='mb-2 p-2 w-full flex justify-left items-center'>A Diamond is awarded for getting all the answers in a game.</p>
+      </div>
+
+      <div
+      class='w-full flex flex-row justify-center items-center'>
+        <img class='w-16 h-16' src="/wordwheel/ruby.svg">
+        <p class='mb-2 p-2 w-full flex justify-left items-center'>A Ruby is awarded for finding a 9 letter word.</p>
+      </div>
+
+      <div
+      class='w-full flex flex-row justify-center items-center'>
+        <img class='w-16 h-16' src="/wordwheel/emerald.svg">
+        <p class='mb-2 p-2 w-full flex justify-left items-center'>An Emerald is awarded for finding an 8 letter word.</p>
+      </div>
+
+      <div
+      class='w-full flex flex-row justify-center items-center'>
+        <img class='w-16 h-16' src="/wordwheel/sapphire.svg">
+        <p class='mb-2 p-2 w-full flex justify-left items-center'>A Sapphire is awarded for finding a 7 letter word.</p>
+      </div>
+
     </div>
 
-    <div x-show="!info" class='flex flex-col justify-start items-center w-full'>
+    <div x-show="info===2" class='flex flex-col justify-start items-center w-full font-f_bungee text-3xl max-w-3xl mx-auto'>
+
+      <div
+      class="w-full flex justify-center items-center">
+        <h1 class='text-3xl p-4 m-4'>Stats</h1>
+        <button x-on:click="info=3" class="flex justify-center items-center w-10 h-10 mx-2 active:scale-95"><img class='w-full h-full' src="/wordwheel/x.svg"></button>
+      </div>
+
+      <div
+      id="STAT_OUTPUT"
+      class='w-full flex flex-col justify-start items-center text-xl'>
+
+      </div>
+
+    </div>
+
+    <div x-show="info===3" class='flex flex-col justify-start items-center w-full'>
     
       <div x-show="open" class="w-full border-b border-gray-100">
         <div id="answerContainer" class="block overflow-y-auto mx-auto max-w-3xl" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)"></div>
@@ -39,7 +104,7 @@
       <div x-show="!open" class="w-full border-b border-gray-100">
         <div id="optionsContainer" class="block overflow-y-auto mx-auto max-w-3xl flex flex-col justify-start items-center" style="height:calc(var(--vh) * 42);max-height:calc(var(--vh) * 42)">
           
-          <div class='flex flex-row justify-center items-center w-full my-2 font-bold font-f_bungee text-xl'>Score</div>
+          <div class='flex flex-row justify-center items-center w-full my-2 font-f_bungee text-3xl'>Score</div>
           <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>9</div><div id="MENU_9" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_9" class='w-16 text-center'>0</div></div>
           <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>8</div><div id="MENU_8" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_8" class='w-16 text-center'>0</div></div>
           <div class='flex flex-row justify-center items-center w-full'><div class='my-2 mr-2 px-2 font-bold w-16 text-center'>7</div><div id="MENU_7" class='w-16 text-center'>0</div><div class='m-2 px-2 w-16 text-center'>of</div><div id="MAX_7" class='w-16 text-center'>0</div></div>
@@ -70,13 +135,14 @@
     
       <div class="flex flex-row justify-center items-center">
         <div class="flex w-full max-w-7xl h-full flex-row justify-center mx-auto sm:px-6 lg:px-8" style="height:calc(var(--vh) * 7.5)">
-          <div id="ScoreDisplay" class="flex justify-center items-center mx-2 w-16 active:scale-95"></div>
+          <div id="ScoreDisplay" class="flex justify-center items-center mx-2 w-16 active:scale-95">0/0</div>
           <button id="PlayButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/play.svg"></button>
           <button id="PauseButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/x.svg"></button>
           <button x-on:click="open=!open" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/options.svg"></button>
-          <button x-on:click="info=!info" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/info.svg"></button>
+          <button x-on:click="info=1" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/info.svg"></button>
           <button id="GlobeButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/globe.svg"></button>
-          <div class="flex justify-center items-center w-16 mx-2 overflow-hidden"><div id="timerDisplay" class="flex justify-center items-center w-full"></div></div>
+          <button x-on:click="info=2" id="StatsButton" class="flex justify-center items-center mx-2 active:scale-95"><img class="w-3/4 h-3/4" src="/wordwheel/bar.svg"></button>
+          <div class="flex justify-center items-center w-16 mx-2 overflow-hidden"><div id="timerDisplay" class="flex justify-center items-center w-full">0:00</div></div>
         </div>
       </div>
 
